@@ -8,12 +8,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
@@ -30,7 +34,7 @@ public class Terminal extends JFrame {
 	private TrainController control = new TrainController();
 
 	private Timer timer;
-
+	
 	public Terminal() {
 		initComponent();
 		addListener();
@@ -173,6 +177,32 @@ public class Terminal extends JFrame {
 					g.drawImage(trainImage, 152, 90, null);
 				else
 					g.drawImage(trainImage, 50, 32, null);
+			}
+		}
+	}
+	
+	class DistanceWorker extends SwingWorker<List,Void>{
+
+		@Override
+		protected List doInBackground() throws Exception {
+			List<Integer> distanceList = new ArrayList<Integer>();
+			// TODO 从NXT处获取距离数据
+			
+			return distanceList;
+		}
+
+		@Override
+		protected void done() {
+			//need需要处理
+			try {
+				List<Integer> distanceList = get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+			finally{				
+				updateGUI();
 			}
 		}
 	}
