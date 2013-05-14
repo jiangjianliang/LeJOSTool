@@ -106,6 +106,15 @@ public class TrainController {
 		sender[0].flush();
 	}
 
+
+	public void commandExit()  throws IOException {
+		sender[0].writeInt(-100);
+		sender[1].writeInt(-100);
+		sender[0].flush();
+		sender[1].flush();
+	}
+	
+	
 	public boolean update() throws IOException {
 		updateDistance();
 		for (int i = 0; i < stationList.length; i++) {
@@ -160,5 +169,6 @@ public class TrainController {
 	public int getTrainPos() {
 		return trainList[0].position;
 	}
+
 
 }

@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
@@ -125,9 +126,29 @@ public class Terminal extends JFrame {
 	}
 
 	private void updateGUI(){
-		
+		int pos = control.getTrainPos();
+		//update text field
+		infoArea.setText("train position : ");
+		if (pos == 0)	infoArea.append("stationA -> stationB");
+		else if (pos == 1)	infoArea.append("stationB");
+		else if (pos == 2)	infoArea.append("stationB -> stationA");
+		else			infoArea.append("stationA");
+		//update graphic panel
+		graphicPanel.repaint();
 	}
 	
+	
+	@Override
+	protected void processWindowEvent(WindowEvent e) {
+		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+			try {
+				control.commandExit();
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(null, "exit error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		super.processWindowEvent(e);
+	}
 	
 	class GraphicPanel extends JPanel {
 		private static final long serialVersionUID = 1269940980827250133L;
