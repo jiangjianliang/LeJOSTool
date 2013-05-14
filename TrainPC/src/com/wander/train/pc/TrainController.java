@@ -29,12 +29,14 @@ public class TrainController {
 		trainList = new pcTrainState[1];
 		pcNxtList = new NXTComm[2];
 
-		NXTInfo nxt_1 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT1",
-				"00:16:53:09:78:1f");
-		NXTInfo nxt_2 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT2",
+		NXTInfo nxt_1 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT2",
 				"00:16:53:10:40:a7");
-		NXTInfo nxt_3 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT3",
+		
+		NXTInfo nxt_2 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT3",
 				"00:16:53:13:3a:1f");
+		
+		NXTInfo nxt_3 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT1",
+				"00:16:53:09:78:1f");
 
 		boolean connected_1 = false;
 		boolean connected_2 = false;
@@ -82,6 +84,7 @@ public class TrainController {
 		trainList[0].destination = des;
 		trainList[0].state = 1;
 		//TODO 以后修改
+		System.out.println("0 write " +Command.SPEED_UP.ordinal());
 		sender[0].writeInt(Command.SPEED_UP.ordinal());
 		sender[0].flush();
 	}
@@ -90,6 +93,7 @@ public class TrainController {
 		trainList[0].destination = des;
 		trainList[0].state = -1;
 		//TODO 以后修改
+		System.out.println("0 write " +Command.SLOW_DOWN.ordinal());
 		sender[0].writeInt(Command.SLOW_DOWN.ordinal());
 		sender[0].flush();
 	}

@@ -18,10 +18,16 @@ public class Station {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		LCD.drawString("waiting...", 0, 0);
+		
 		//建立bluetooth连接
 		NXTConnection nxtCon = Bluetooth.waitForConnection();
 		DataInputStream dis = nxtCon.openDataInputStream();
 		DataOutputStream dos = nxtCon.openDataOutputStream();
+		
+		LCD.drawString("connected.", 0, 0);
+		LCD.drawString("distance:", 0, 1);
+		LCD.drawString("cmd:", 0, 2);
 		
 		UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		
@@ -33,6 +39,9 @@ public class Station {
 					break;
 				}
 				int cmd = dis.readInt();
+				LCD.drawString("debug", 0,4);
+				LCD.drawString(String.valueOf(cmd), 0, 5);
+				//会报告异常
 				Command command = Command.values()[cmd];
 				switch(command){
 				case EXIT:

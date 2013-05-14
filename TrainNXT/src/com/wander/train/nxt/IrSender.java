@@ -18,15 +18,21 @@ public class IrSender {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		LCD.drawString("waiting...", 0, 0);
+		
 		//建立bluetooth连接
 		NXTConnection nxtCon = Bluetooth.waitForConnection();
 		DataInputStream dis = nxtCon.openDataInputStream();
 		DataOutputStream dos = nxtCon.openDataOutputStream();
 		
+		LCD.drawString("connected.", 0, 0);
+		LCD.drawString("distance:", 0, 1);
+		LCD.drawString("cmd:", 0, 2);
+		
 		IrLinkExt link = new IrLinkExt(SensorPort.S1);
 		UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		
-		link.sendPFSingleModePWM(IrLinkExt.PF_Channel_1, IrLinkExt.PF_SINGLE_MODE_RED_PORT, IrLinkExt.PF_PMW_FLOAT);
+		//link.sendPFSingleModePWM(IrLinkExt.PF_Channel_1, IrLinkExt.PF_SINGLE_MODE_RED_PORT, IrLinkExt.PF_PMW_FLOAT);
 		boolean exitFlag = false;
 		while(true){
 			try {
@@ -35,6 +41,9 @@ public class IrSender {
 					break;
 				}
 				int cmd = dis.readInt();
+				LCD.drawString("debug", 0,4);
+				LCD.drawString(String.valueOf(cmd), 0, 5);
+				//TODO 会报告异常
 				Command command = Command.values()[cmd];
 				switch(command){
 				case EXIT:
