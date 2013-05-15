@@ -7,6 +7,7 @@ import java.io.IOException;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
 import lejos.pc.comm.NXTInfo;
 
 public class TrainController {
@@ -16,8 +17,8 @@ public class TrainController {
 
 	public DataOutputStream[] sender;
 
-	// private NXTConnector[] pcNxtList;
-	private NXTComm[] pcNxtList;
+	private NXTConnector[] pcNxtList;
+	//private NXTComm[] pcNxtList;
 	private DataInputStream[] receiver;
 
 	public TrainController() {
@@ -27,7 +28,11 @@ public class TrainController {
 	private void init() {
 		stationList = new pcStationState[2]; // 0 : sA; 1 : sB;
 		trainList = new pcTrainState[1];
-		pcNxtList = new NXTComm[2];
+		
+		pcNxtList = new NXTConnector[2];
+		pcNxtList[0] = new NXTConnector();
+		pcNxtList[1] = new NXTConnector();
+		//pcNxtList = new NXTComm[2];
 
 		NXTInfo nxt_1 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT2",
 				"00:16:53:10:40:a7");
@@ -41,7 +46,10 @@ public class TrainController {
 		boolean connected_1 = false;
 		boolean connected_2 = false;
 		boolean connected_3 = false;
-
+		
+		connected_1 = pcNxtList[0].connectTo("bt://NXT");
+		connected_2 = pcNxtList[1].connectTo("bt://NXT_OF");
+/*
 		try {
 			pcNxtList[0] = NXTCommFactory
 					.createNXTComm(NXTCommFactory.BLUETOOTH);
@@ -53,7 +61,7 @@ public class TrainController {
 		} catch (NXTCommException e) {
 			e.printStackTrace();
 		}
-
+*/
 		if (!connected_1 || !connected_2) {
 			System.out.println("error while connection to NXT.");
 			System.exit(-1);
@@ -93,8 +101,12 @@ public class TrainController {
 		trainList[0].destination = des;
 		trainList[0].state = -1;
 		//TODO 以后修改
+		/*
 		System.out.println("0 write " +Command.SLOW_DOWN.ordinal());
 		sender[0].writeInt(Command.SLOW_DOWN.ordinal());
+		*/
+		
+		sender[0].writeInt(1000+trainList[0].speed);
 		sender[0].flush();
 	}
 
@@ -108,6 +120,10 @@ public class TrainController {
 
 
 	public void commandExit()  throws IOException {
+		/*
+		sender[0].writeInt(Command.EXIT.ordinal());
+		sender[1].writeInt(Command.EXIT.ordinal());
+		*/
 		sender[0].writeInt(-100);
 		sender[1].writeInt(-100);
 		sender[0].flush();

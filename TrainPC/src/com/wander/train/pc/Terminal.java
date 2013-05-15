@@ -195,6 +195,7 @@ public class Terminal extends JFrame {
 		protected void done() {
 			//need需要处理
 			try {
+				//这里可能需要通过timeout机制来保证响应
 				List<Integer> distanceList = get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -213,7 +214,7 @@ public class Terminal extends JFrame {
 	public static void main(String[] args) {
 		Terminal ter = new Terminal();
 
-		ter.setSize(800, 600);
+		ter.setSize(400, 600);
 		ter.setLocationRelativeTo(null);
 		ter.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ter.setVisible(true);
