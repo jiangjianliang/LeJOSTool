@@ -30,9 +30,10 @@ public class nxtSub {
 			try {
 				int cmd = pcDin.readInt();
 				LCD.drawInt(cmd, 4, 5, 2);
-				if (cmd == -100)	//exit
+				if (cmd == Command.EXIT){
 					break;
-				else if (cmd == 100) {	//write distance
+				}
+				else if (cmd == Command.UPDATE_DISTANCE) {
 					int distance = sonic.getDistance();
 					//while (distance > 165)	distance = sonic.getDistance();
 					LCD.drawInt(distance, 3, 10, 1);

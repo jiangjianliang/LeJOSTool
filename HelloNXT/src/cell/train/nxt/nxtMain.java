@@ -33,24 +33,24 @@ public class nxtMain {
 			try {
 				int cmd = pcDin.readInt();
 				LCD.drawInt(cmd, 4, 5, 2);
-				if (cmd == -100)	//exit
+				if (cmd == Command.EXIT)
 					break;
-				else if (cmd == 100) {	//write distance
+				else if (cmd == Command.UPDATE_DISTANCE) {
 					int distance = sonic.getDistance();
 					//while (distance > 165)	distance = sonic.getDistance();
 					LCD.drawInt(distance, 3, 10, 1);
 					pcDout.writeInt(distance);
 					pcDout.flush();
-				} else if (cmd == 0) {
-					link.sendPFSingleModePWM(0, 0, 0);
+				} else if (cmd == Command.TRAIN_STOP) {
+					link.sendPFSingleModePWM(IrLinkExt.PF_Channel_1, IrLinkExt.PF_SINGLE_MODE_RED_PORT, IrLinkExt.PF_PMW_FLOAT);
 				} else {
 					boolean dir = cmd > 0;	//true : forward;	false : backward
 					if (!dir)	cmd *= -1;
-					int speed = cmd % 1000;
+					int speed = cmd % Command.SPEED_MARK;
 					int cmdB;
 					if (dir)	cmdB = speed;
 					else		cmdB = 16 - speed;
-					link.sendPFSingleModePWM(0, 0, cmdB);
+					link.sendPFSingleModePWM(IrLinkExt.PF_Channel_1, IrLinkExt.PF_SINGLE_MODE_RED_PORT, cmdB);
 				}
 			} catch (IOException e) {
 				LCD.drawString("ERROR !", 0, 7);

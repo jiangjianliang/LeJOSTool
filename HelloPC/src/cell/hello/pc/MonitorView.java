@@ -8,36 +8,42 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
-public class pcFrame extends JFrame {
+public class MonitorView extends JFrame {
 
 	private static final long serialVersionUID = 3798395486791804473L;
 	private GraphicPanel graphicPanel;
 	private JPanel buttonsPanel;
-	private JButton btForwardA, btBackwardA, btStop, btForwardB, btBackwardB, btSpeedUp, btSpeedDown;
+	private JButton btForwardA, btBackwardA, btStop, btForwardB, btBackwardB,
+			btSpeedUp, btSpeedDown;
 	private TextArea infoArea;
-	private pcControlTest control;
-	
+	private MonitorModel control;
+
 	private Timer timer;
 
 	public static void main(String[] args) {
-		pcFrame pcGUI = new pcFrame();
+		MonitorView pcGUI = new MonitorView();
 		pcGUI.setSize(360, 500);
 		pcGUI.setLocationRelativeTo(null);
 		pcGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pcGUI.setVisible(true);
 	}
 
-	public pcFrame() {		
+	public MonitorView() {
 		graphicPanel = new GraphicPanel();
 		graphicPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		buttonsPanel = new JPanel(new GridLayout(3, 3, 5, 5));
@@ -61,49 +67,58 @@ public class pcFrame extends JFrame {
 		add(graphicPanel);
 		add(infoArea);
 		add(buttonsPanel);
-		
+
 		addListener();
-		control = new pcControlTest();
-		
+		control = new MonitorModel();
+
 		timer = new Timer(200, new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					//System.out.println("update.");
-					if (control.update())
-						updateGUI();
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "update error.", "ERROR", JOptionPane.ERROR_MESSAGE);
-				}
+				/*
+				 * try { //System.out.println("update."); if (control.update())
+				 * updateGUI(); } catch (IOException e1) {
+				 * JOptionPane.showMessageDialog(null, "update error.", "ERROR",
+				 * JOptionPane.ERROR_MESSAGE); }
+				 */
+				SwingWorker worker = new DistanceWorker();
+				worker.execute();
+
 			}
 		});
+
 		timer.start();
 		updateGUI();
-		//System.out.println("init over.");
+		// System.out.println("init over.");
 	}
-	
+
 	@Override
 	protected void processWindowEvent(WindowEvent e) {
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			try {
 				control.commandExit();
 			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(null, "exit error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "exit error.", "ERROR",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		super.processWindowEvent(e);
 	}
-	
+
 	private void updateGUI() {
 		int pos = control.getTrainPos();
-		//update text field
+		// update text field
 		infoArea.setText("train position : ");
-		if (pos == 0)	infoArea.append("stationA -> stationB");
-		else if (pos == 1)	infoArea.append("stationB");
-		else if (pos == 2)	infoArea.append("stationB -> stationA");
-		else			infoArea.append("stationA");
-		//update graphic panel
+		if (pos == 0) {
+			infoArea.append("stationA -> stationB");
+		} else if (pos == 1) {
+			infoArea.append("stationB");
+		} else if (pos == 2) {
+			infoArea.append("stationB -> stationA");
+		} else {
+			infoArea.append("stationA");
+		}
+		// update graphic panel
 		graphicPanel.repaint();
 	}
 
@@ -116,7 +131,8 @@ public class pcFrame extends JFrame {
 					control.commandForward(3);
 					infoArea.setText("train is forward to A.");
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "forward(A) error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "forward(A) error.",
+							"ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -129,7 +145,8 @@ public class pcFrame extends JFrame {
 					control.commandBackward(3);
 					infoArea.setText("train is backward to A.");
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "backward(A) error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "backward(A) error.",
+							"ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -142,7 +159,8 @@ public class pcFrame extends JFrame {
 					control.commandStop();
 					infoArea.setText("train is stop.");
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "stop error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "stop error.", "ERROR",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -155,7 +173,8 @@ public class pcFrame extends JFrame {
 					control.commandForward(1);
 					infoArea.setText("train is forward to B.");
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "forward(B) error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "forward(B) error.",
+							"ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -168,7 +187,8 @@ public class pcFrame extends JFrame {
 					control.commandBackward(1);
 					infoArea.setText("train is backward to A.");
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "backward(B) error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "backward(B) error.",
+							"ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -179,9 +199,11 @@ public class pcFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					control.commandSpeedUp();
-					infoArea.setText("speed up.\n current speed : " + control.getTrainSpeed());
+					infoArea.setText("speed up.\n current speed : "
+							+ control.getTrainSpeed());
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "speed up error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "speed up error.",
+							"ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -192,32 +214,80 @@ public class pcFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					control.commandSpeedDown();
-					infoArea.setText("speed down.\n current speed : " + control.getTrainSpeed());
+					infoArea.setText("speed down.\n current speed : "
+							+ control.getTrainSpeed());
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "speed down error.", "ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "speed down error.",
+							"ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 	}
-	
+
 	class GraphicPanel extends JPanel {
 		private static final long serialVersionUID = 1269940980827250133L;
-		
+
 		private final ImageIcon imageIcon_1 = new ImageIcon("image/backmap.jpg");
 		private final ImageIcon imageIcon_2 = new ImageIcon("image/train.jpg");
 		private final Image backImage = imageIcon_1.getImage();
 		private final Image trainImage = imageIcon_2.getImage();
-		
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			if (backImage != null)	g.drawImage(backImage, 0, 0, null);
+			if (backImage != null)
+				g.drawImage(backImage, 0, 0, null);
 			if (trainImage != null) {
 				int pos = control.getTrainPos();
-				if (pos == 0)	g.drawImage(trainImage, 150, 32, null);
-				else if (pos == 1)	g.drawImage(trainImage, 260, 32, null);
-				else if (pos == 2)	g.drawImage(trainImage, 152, 90, null);
-				else 			g.drawImage(trainImage, 50, 32, null);
+				if (pos == 0) {
+					g.drawImage(trainImage, 150, 32, null);
+				} else if (pos == 1) {
+					g.drawImage(trainImage, 260, 32, null);
+				} else if (pos == 2) {
+					g.drawImage(trainImage, 152, 90, null);
+				} else {
+					g.drawImage(trainImage, 50, 32, null);
+				}
+			}
+		}
+	}
+	/**
+	 * 后台任务类，用于和NXT交互，得到距离信息
+	 * @author wander
+	 *
+	 */
+	class DistanceWorker extends SwingWorker<List, Void> {
+
+		@Override
+		protected List doInBackground() throws Exception {
+			control.update();
+			List<Integer> distanceList = new ArrayList<Integer>();
+			/*
+			 * // TODO 从NXT处获取距离数据
+			 * System.err.println("Is EventDispatchThread "+SwingUtilities
+			 * .isEventDispatchThread()); distanceList.add(-1);
+			 * distanceList.add(-2);
+			 */
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			// need需要处理
+			try {
+				// System.err.println("Is EventDispatchThread "+SwingUtilities.isEventDispatchThread());
+				// 这里可能需要通过timeout机制来保证响应
+				List<Integer> distanceList = get();
+				/*
+				 * System.err.println(distanceList.get(0));
+				 * System.err.println(distanceList.get(1));
+				 */
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			} finally {
+				updateGUI();
 			}
 		}
 	}
