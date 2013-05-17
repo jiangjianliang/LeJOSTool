@@ -89,7 +89,6 @@ public class MonitorView extends JFrame {
 
 		timer.start();
 		updateGUI();
-		// System.out.println("init over.");
 	}
 
 	@Override
@@ -260,32 +259,22 @@ public class MonitorView extends JFrame {
 
 		@Override
 		protected List doInBackground() throws Exception {
+			//从NXT处获取距离数据
 			control.update();
-			List<Integer> distanceList = new ArrayList<Integer>();
-			/*
-			 * // TODO 从NXT处获取距离数据
-			 * System.err.println("Is EventDispatchThread "+SwingUtilities
-			 * .isEventDispatchThread()); distanceList.add(-1);
-			 * distanceList.add(-2);
-			 */
 			return null;
 		}
 
 		@Override
 		protected void done() {
-			// need需要处理
 			try {
-				// System.err.println("Is EventDispatchThread "+SwingUtilities.isEventDispatchThread());
 				// 这里可能需要通过timeout机制来保证响应
 				List<Integer> distanceList = get();
-				/*
-				 * System.err.println(distanceList.get(0));
-				 * System.err.println(distanceList.get(1));
-				 */
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
+				//e.printStackTrace();
 			} catch (ExecutionException e) {
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
+				//e.printStackTrace();
 			} finally {
 				updateGUI();
 			}

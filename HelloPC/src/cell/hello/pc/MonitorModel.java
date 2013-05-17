@@ -124,10 +124,10 @@ public class MonitorModel {
 
 	private void updateDistance() throws IOException {
 		// System.out.println("update distance.");
-		sender[0].writeInt(100);
+		sender[0].writeInt(Command.UPDATE_DISTANCE);
 		sender[0].flush();
 		stationList[0].distance = receiver[0].readInt();
-		sender[1].writeInt(100);
+		sender[1].writeInt(Command.UPDATE_DISTANCE);
 		sender[1].flush();
 		stationList[1].distance = receiver[1].readInt();
 	}

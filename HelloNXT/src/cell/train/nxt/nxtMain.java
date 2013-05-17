@@ -16,8 +16,6 @@ public class nxtMain {
 	public static void main(String[] args) {
 		LCD.drawString("waiting...", 0, 0);
 		
-		LCD.drawString("waiting...", 0, 0);
-		
 		//NXTConnection connection = USB.waitForConnection();
 		NXTConnection connection = Bluetooth.waitForConnection();
 		DataInputStream pcDin = connection.openDataInputStream();
@@ -29,31 +27,18 @@ public class nxtMain {
 		IrLinkExt link = new IrLinkExt(SensorPort.S1);
 		UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		
+		CommandFactory cmdFactory = CommandFactory.getInstance();
+		
 		while (true) {
 			try {
 				int cmd = pcDin.readInt();
 				LCD.drawInt(cmd, 4, 5, 2);
-				if (cmd == Command.EXIT)
+				Command concreteCommand = cmdFactory.parseCommand(cmd, link, sonic, pcDout);
+				if(!concreteCommand.execute()){
 					break;
-				else if (cmd == Command.UPDATE_DISTANCE) {
-					int distance = sonic.getDistance();
-					//while (distance > 165)	distance = sonic.getDistance();
-					LCD.drawInt(distance, 3, 10, 1);
-					pcDout.writeInt(distance);
-					pcDout.flush();
-				} else if (cmd == Command.TRAIN_STOP) {
-					link.sendPFSingleModePWM(IrLinkExt.PF_Channel_1, IrLinkExt.PF_SINGLE_MODE_RED_PORT, IrLinkExt.PF_PMW_FLOAT);
-				} else {
-					boolean dir = cmd > 0;	//true : forward;	false : backward
-					if (!dir)	cmd *= -1;
-					int speed = cmd % Command.SPEED_MARK;
-					int cmdB;
-					if (dir)	cmdB = speed;
-					else		cmdB = 16 - speed;
-					link.sendPFSingleModePWM(IrLinkExt.PF_Channel_1, IrLinkExt.PF_SINGLE_MODE_RED_PORT, cmdB);
 				}
 			} catch (IOException e) {
-				LCD.drawString("ERROR !", 0, 7);
+				LCD.drawString("ERROR READ!", 0, 7);
 			}
 		}
 		try {

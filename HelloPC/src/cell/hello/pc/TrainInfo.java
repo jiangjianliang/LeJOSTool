@@ -1,8 +1,6 @@
 package cell.hello.pc;
 
 public class TrainInfo {
-	//没有使用
-	public int port;	//R : 0 ~ 3;	B : 4 ~ 7;
 	
 	
 	private int speed;
@@ -11,7 +9,6 @@ public class TrainInfo {
 	private int destination;		//0 : none;		1 : sB;		2 : sA;
 	
 	public TrainInfo(){
-		port = 0;
 		speed = 3;
 		state = 0;
 		position = 1;

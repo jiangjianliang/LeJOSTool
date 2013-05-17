@@ -25,23 +25,17 @@ public class nxtSub {
 		LCD.drawString("cmd:", 0, 2);
 		
 		UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
-		
+		CommandFactory cmdFactory = CommandFactory.getInstance();
 		while (true) {
 			try {
 				int cmd = pcDin.readInt();
 				LCD.drawInt(cmd, 4, 5, 2);
-				if (cmd == Command.EXIT){
+				Command concreteCommand = cmdFactory.parseCommand(cmd, null, sonic, pcDout);
+				if(!concreteCommand.execute()){
 					break;
 				}
-				else if (cmd == Command.UPDATE_DISTANCE) {
-					int distance = sonic.getDistance();
-					//while (distance > 165)	distance = sonic.getDistance();
-					LCD.drawInt(distance, 3, 10, 1);
-					pcDout.writeInt(distance);
-					pcDout.flush();
-				}
 			} catch (IOException e) {
-				LCD.drawString("ERROR !", 0, 7);
+				LCD.drawString("ERROR READ!", 0, 7);
 			}
 		}
 		try {
