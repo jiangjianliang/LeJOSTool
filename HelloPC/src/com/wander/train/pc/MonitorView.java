@@ -1,4 +1,4 @@
-package cell.hello.pc;
+package com.wander.train.pc;
 
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -105,7 +105,7 @@ public class MonitorView extends JFrame {
 	}
 
 	private void updateGUI() {
-		int pos = control.getTrainPos();
+		int pos = control.getTrainPos(0);
 		// update text field
 		infoArea.setText("train position : ");
 		if (pos == 0) {
@@ -127,7 +127,7 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandForward(3);
+					control.commandForward(0,3);
 					infoArea.setText("train is forward to A.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "forward(A) error.",
@@ -141,7 +141,7 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandBackward(3);
+					control.commandBackward(0,3);
 					infoArea.setText("train is backward to A.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "backward(A) error.",
@@ -155,7 +155,7 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandStop();
+					control.commandStop(0);
 					infoArea.setText("train is stop.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "stop error.", "ERROR",
@@ -169,7 +169,7 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandForward(1);
+					control.commandForward(0,1);
 					infoArea.setText("train is forward to B.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "forward(B) error.",
@@ -183,7 +183,7 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandBackward(1);
+					control.commandBackward(0,1);
 					infoArea.setText("train is backward to A.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "backward(B) error.",
@@ -197,9 +197,9 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandSpeedUp();
+					control.commandSpeedUp(0);
 					infoArea.setText("speed up.\n current speed : "
-							+ control.getTrainSpeed());
+							+ control.getTrainSpeed(0));
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "speed up error.",
 							"ERROR", JOptionPane.ERROR_MESSAGE);
@@ -212,9 +212,9 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandSpeedDown();
+					control.commandSpeedDown(0);
 					infoArea.setText("speed down.\n current speed : "
-							+ control.getTrainSpeed());
+							+ control.getTrainSpeed(0));
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "speed down error.",
 							"ERROR", JOptionPane.ERROR_MESSAGE);
@@ -237,7 +237,7 @@ public class MonitorView extends JFrame {
 			if (backImage != null)
 				g.drawImage(backImage, 0, 0, null);
 			if (trainImage != null) {
-				int pos = control.getTrainPos();
+				int pos = control.getTrainPos(0);
 				if (pos == 0) {
 					g.drawImage(trainImage, 150, 32, null);
 				} else if (pos == 1) {

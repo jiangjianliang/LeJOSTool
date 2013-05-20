@@ -1,4 +1,4 @@
-package cell.hello.pc;
+package com.wander.train.pc;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -26,7 +26,7 @@ public class MonitorModel {
 
 	private void init() {
 		stationList = new StationInfo[2]; // 0 : sA; 1 : sB;
-		trainList = new TrainInfo[1];
+		trainList = new TrainInfo[2];
 
 		boolean connected_1 = false;
 		boolean connected_2 = false;
@@ -78,7 +78,8 @@ public class MonitorModel {
 
 		// initialize train
 		trainList[0] = new TrainInfo();
-
+		trainList[0] = new TrainInfo();
+		
 		// initialize station
 		stationList[0] = new StationInfo(255);
 		stationList[1] = new StationInfo(255);
@@ -86,13 +87,26 @@ public class MonitorModel {
 
 	/**
 	 * 在DistanceWorker.doInBackground中调用
+	 *
 	 * @return
 	 * @throws IOException
 	 */
 	public boolean update() throws IOException {
 		updateDistance();
+		//新的业务逻辑
+		for(int i =0; i <stationList.length; i++){
+			//是否经过站台
+			int isPass = stationList[i].updateDistance();
+			//是否进入换轨状态
+			int isIn = stationList[i].isIn;
+			
+			
+			
+		}
+		
 		for (int i = 0; i < stationList.length; i++) {
-			int j = stationList[i].update();
+			int j = stationList[i].updateDistance();
+			
 			if (j == 0)
 				continue;
 			else if (j == 1) { // train enter
@@ -100,7 +114,9 @@ public class MonitorModel {
 				trainList[0].setPosition(3 - 2 * i);
 				if (trainList[0].isArrival()) {
 					trainList[0].setStop();
-					commandStop();
+					//TODO 需要先写死是哪个停止
+					int which = 0;
+					commandStop(which);
 				}
 				return true;
 			} else if (j == 2) { // train leave
@@ -123,55 +139,68 @@ public class MonitorModel {
 	}
 
 	private void updateDistance() throws IOException {
-		// System.out.println("update distance.");
-		sender[0].writeInt(Command.UPDATE_DISTANCE);
-		sender[0].flush();
-		stationList[0].distance = receiver[0].readInt();
-		sender[1].writeInt(Command.UPDATE_DISTANCE);
-		sender[1].flush();
-		stationList[1].distance = receiver[1].readInt();
+		for (int i = 0; i < stationList.length; i++) {
+			sender[i].writeInt(Command.UPDATE_DISTANCE);
+			sender[i].flush();
+			stationList[i].distance = receiver[i].readInt();
+			stationList[i].isIn = receiver[i].readInt();
+		}
+	}
+	
+	public void commandStop(int i) throws IOException {
+		trainList[i].setStop();
+		trainList[i].setDestination(trainList[i].getPosition());
+		sender[i].writeInt(0);
+		sender[i].flush();
 	}
 
-	public void commandStop() throws IOException {
-		trainList[0].setStop();
-		trainList[0].setDestination(trainList[0].getPosition());
-		sender[0].writeInt(0);
-		sender[0].flush();
-	}
-
-	public void commandForward(int des) throws IOException {
-		trainList[0].setDestination(des);
-		trainList[0].setForward();
-		sender[0].writeInt(Command.SPEED_MARK + trainList[0].getSpeed());
-		sender[0].flush();
-	}
-
-	public void commandBackward(int des) throws IOException {
-		trainList[0].setDestination(des);
-		trainList[0].setBackward();
-		sender[0].writeInt(-Command.SPEED_MARK - trainList[0].getSpeed());
+	public void commandForward(int i, int des) throws IOException {
+		trainList[i].setDestination(des);
+		trainList[i].setForward();
+		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
+		if(i == 0){
+			cmd +=Command.TRAIN_MARK_A;
+		}
+		sender[0].writeInt(cmd);
 		sender[0].flush();
 	}
 
-	public void commandSpeedUp() throws IOException {
-		int speed = trainList[0].getSpeed() + 1;
+	public void commandBackward(int i, int des) throws IOException {
+		trainList[i].setDestination(des);
+		trainList[i].setBackward();
+		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
+		if(i == 0){
+			cmd +=Command.TRAIN_MARK_A;
+		}
+		sender[0].writeInt(-cmd);
+		sender[0].flush();
+	}
+
+	public void commandSpeedUp(int i) throws IOException {
+		int speed = trainList[i].getSpeed() + 1;
 		if ((speed >= 1) && (speed <= 7))
-			trainList[0].setSpeed(speed);
-		if ( !trainList[0].isStop()) {
-			int cmd = Command.SPEED_MARK + trainList[0].getSpeed();
-			cmd = (trainList[0].isForward() ? cmd : cmd * -1);
+			trainList[i].setSpeed(speed);
+		if ( !trainList[i].isStop()) {
+			int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
+			if(i == 0){
+				cmd +=Command.TRAIN_MARK_A; 
+			}
+			cmd = (trainList[i].isForward() ? cmd : cmd * -1);
 			sender[0].writeInt(cmd);
 			sender[0].flush();
 		}
 	}
 
-	public void commandSpeedDown() throws IOException {
-		int speed = trainList[0].getSpeed() - 1;
+	public void commandSpeedDown(int i) throws IOException {
+		int speed = trainList[i].getSpeed() - 1;
 		if ((speed >= 1) && (speed <= 7))
-			trainList[0].setSpeed(speed);
-		if ( !trainList[0].isStop()) {
-			int cmd = Command.SPEED_MARK + trainList[0].getSpeed();
-			cmd = (trainList[0].isForward() ? cmd : cmd * -1);
+			trainList[i].setSpeed(speed);
+		if ( !trainList[i].isStop()) {
+			int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
+			if(i == 0){
+				cmd +=Command.TRAIN_MARK_A;
+			}
+			cmd = (trainList[i].isForward() ? cmd : cmd * -1);
 			sender[0].writeInt(cmd);
 			sender[0].flush();
 		}
@@ -184,11 +213,11 @@ public class MonitorModel {
 		sender[1].flush();
 	}
 
-	public int getTrainPos() {
-		return trainList[0].getPosition();
+	public int getTrainPos(int i) {
+		return trainList[i].getPosition();
 	}
 
-	public int getTrainSpeed() {
-		return trainList[0].getSpeed();
+	public int getTrainSpeed(int i) {
+		return trainList[i].getSpeed();
 	}
 }

@@ -1,8 +1,9 @@
-package cell.hello.pc;
+package com.wander.train.pc;
 
 public class StationInfo {
 
 	public int distance;
+	public int isIn = 0;
 	public UltraSonic ultraSonic;
 
 	public StationInfo(int dis) {
@@ -10,7 +11,7 @@ public class StationInfo {
 		ultraSonic = new UltraSonic(dis);
 	}
 
-	public int update() {
+	public int updateDistance() {
 		return ultraSonic.update(distance);
 	}
 	

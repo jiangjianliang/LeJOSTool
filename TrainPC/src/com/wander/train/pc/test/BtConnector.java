@@ -36,7 +36,6 @@ public class BtConnector {
 			connected_2 = connector_2.open(nxt_2);
 			connected_3 = connector_3.open(nxt_3);
 		} catch (NXTCommException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

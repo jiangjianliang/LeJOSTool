@@ -1,4 +1,4 @@
-package cell.hello.pc;
+package com.wander.train.pc;
 
 public class TrainInfo {
 	

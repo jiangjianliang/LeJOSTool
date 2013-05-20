@@ -1,4 +1,4 @@
-package cell.train.nxt;
+package com.wander.train.nxt;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
