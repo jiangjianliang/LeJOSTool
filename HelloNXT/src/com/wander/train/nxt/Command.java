@@ -179,13 +179,20 @@ class UpdateDistanceCommand implements Command {
 	}
 }
 
+/**
+ * 变轨命令
+ * @author wander
+ *
+ */
 class SwitchCommand implements Command{
 	private static SwitchCommand instance = new  SwitchCommand();
 	
 	private boolean switchToMain = false;
 	
+	private static int DEGREE = 35;
+	
 	private SwitchCommand(){
-		
+		Motor.A.setSpeed(DEGREE*3);
 	}
 	
 	public static SwitchCommand getInstance(boolean main){
@@ -196,11 +203,15 @@ class SwitchCommand implements Command{
 	@Override
 	public boolean execute() {
 		if(switchToMain){
-			//TODO 参考之前的代码
+			//TODO 等待现场调试
+			
 		}
 		else{
 			//Motor.A.rotate();
+			
 		}
+		//Motor.A.rotate(DEGREE+10);
+		//Motor.A.rotate(-DEGREE-10);
 		return true;
 	}
 

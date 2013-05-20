@@ -12,6 +12,10 @@ import lejos.pc.comm.NXTInfo;
 
 public class MonitorModel {
 	public StationInfo[] stationList;
+	/*
+	 * 假定同方向上有TrainInfo[0]早于TrainInfo[1]，
+	 * 也就是TrainInfo[0]会更早到达它们的共同站点
+	 */
 	public TrainInfo[] trainList;
 
 	public DataOutputStream[] sender;
@@ -81,8 +85,8 @@ public class MonitorModel {
 		trainList[0] = new TrainInfo();
 		
 		// initialize station
-		stationList[0] = new StationInfo(255);
-		stationList[1] = new StationInfo(255);
+		stationList[0] = new SwitchStationInfo(255);
+		stationList[1] = new NormalStationInfo(255);
 	}
 
 	/**
@@ -93,17 +97,22 @@ public class MonitorModel {
 	 */
 	public boolean update() throws IOException {
 		updateDistance();
+		int[] isPassList = new int[2];
 		//新的业务逻辑
 		for(int i =0; i <stationList.length; i++){
 			//是否经过站台
-			int isPass = stationList[i].updateDistance();
-			//是否进入换轨状态
-			int isIn = stationList[i].isIn;
-			//TODO 需要开始写代码
-			
-			
+			isPassList[i] = stationList[i].updateDistance();
 		}
+		//当发生了TouchSensor发生时，需要知道是哪一辆列车
 		
+		//TrainEnter-TrainLeave-TouchSensor-TrainStop-SwtichRail-TrainStart-TrainEnter-TrainLeave-SwitchRail
+		
+			//是否进入换轨状态
+			//int isIn = stationList[i].isIn;
+			//TODO 需要开始写代码
+			//这里有个状态机
+		
+			
 		for (int i = 0; i < stationList.length; i++) {
 			int j = stationList[i].updateDistance();
 			
