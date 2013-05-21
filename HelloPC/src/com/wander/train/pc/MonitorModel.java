@@ -57,11 +57,12 @@ public class MonitorModel {
 		try {
 			pcNxtList[0] = NXTCommFactory
 					.createNXTComm(NXTCommFactory.BLUETOOTH);
-			pcNxtList[1] = NXTCommFactory
-					.createNXTComm(NXTCommFactory.BLUETOOTH);
 			connected_1 = pcNxtList[0].open(nxt_1);
+			
+			pcNxtList[1] = NXTCommFactory
+					.createNXTComm(NXTCommFactory.BLUETOOTH);			
 			connected_2 = pcNxtList[1].open(nxt_2);
-
+						
 		} catch (NXTCommException e) {
 			e.printStackTrace();
 		}
@@ -74,15 +75,18 @@ public class MonitorModel {
 
 		// initialize input and output
 		sender = new DataOutputStream[2];
-		sender[0] = new DataOutputStream(pcNxtList[0].getOutputStream());
-		sender[1] = new DataOutputStream(pcNxtList[1].getOutputStream());
 		receiver = new DataInputStream[2];
+		
+		sender[0] = new DataOutputStream(pcNxtList[0].getOutputStream());
 		receiver[0] = new DataInputStream(pcNxtList[0].getInputStream());
+		
+		
+		sender[1] = new DataOutputStream(pcNxtList[1].getOutputStream());
 		receiver[1] = new DataInputStream(pcNxtList[1].getInputStream());
 
 		// initialize train
 		trainList[0] = new TrainInfo();
-		trainList[0] = new TrainInfo();
+		trainList[1] = new TrainInfo();
 		
 		// initialize station
 		stationList[0] = new SwitchStationInfo(this, 255);
@@ -100,46 +104,12 @@ public class MonitorModel {
 	public boolean update() throws IOException {
 		updateDistance();
 		//int[] isPassList = new int[2];
-		//新的业务逻辑
 		for(int i =0; i <stationList.length; i++){
 			stationList[i].push();
 			//是否经过站台
 			//isPassList[i] = stationList[i].updateDistance();
 		}
-		
-			
-		for (int i = 0; i < stationList.length; i++) {
-			int j = stationList[i].updateDistance();
-			
-			if (j == 0)
-				continue;
-			else if (j == 1) { // train enter
-				// TODO update train state
-				trainList[0].setPosition(3 - 2 * i);
-				if (trainList[0].isArrival()) {
-					trainList[0].setStop();
-					//TODO 需要先写死是哪个停止
-					int which = 0;
-					commandStop(which);
-				}
-				return true;
-			} else if (j == 2) { // train leave
-				// TODO update train state
-				if (trainList[0].isForward()) {
-					if (i == 0)
-						trainList[0].setPosition(0);
-					else
-						trainList[0].setPosition(2);
-				} else { // backward
-					if (i == 0)
-						trainList[0].setPosition(2);
-					else
-						trainList[0].setPosition(0);
-				}
-				return true;
-			}
-		}
-		return false;
+		return true;
 	}
 
 	private void updateDistance() throws IOException {
@@ -147,7 +117,7 @@ public class MonitorModel {
 			sender[i].writeInt(Command.UPDATE_DISTANCE);
 			sender[i].flush();
 			stationList[i].distance = receiver[i].readInt();
-			stationList[i].isIn = receiver[i].readInt();
+			//stationList[i].isIn = receiver[i].readInt();
 		}
 	}
 	

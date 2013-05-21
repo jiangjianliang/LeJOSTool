@@ -15,7 +15,7 @@ public abstract class StationInfo {
 	
 	protected int stationIndex;
 	
-	private State state;
+	protected State state = new InProgress();
 	private int delay = 0;
 	private int DELAY_COUNT = 5;
 
@@ -50,7 +50,6 @@ public abstract class StationInfo {
 		}
 
 		public int update(int dis) {
-
 			// train enter
 			if (distance > 15 && (distance = dis) <= 15)// TODO 15这个值需要修改
 				return 1;
@@ -90,6 +89,12 @@ public abstract class StationInfo {
 		public void doExtra() throws IOException {
 			// do nothing
 		}
+
+		@Override
+		public String toString() {
+			return "InProgress";
+		}
+		
 	}
 
 	class TrainEnter implements State {
@@ -104,6 +109,13 @@ public abstract class StationInfo {
 		public void doExtra() throws IOException {
 			// do nothing
 		}
+
+		@Override
+		public String toString() {
+			return "TrainEnter";
+		}
+		
+		
 	}
 
 	class TrainStop implements State {
@@ -124,14 +136,20 @@ public abstract class StationInfo {
 
 		@Override
 		public void doExtra() throws IOException {
-			// TODO 需要知道是哪一个列车
 			// 发出列车停止命令
 			for(int i = 0; i < trainList.length; i++){
 				if(trainList[i].getDestination() == stationIndex){
-					
+					//先记下是哪一辆火车要到达站台
+					which = i;
+					break;
 				}
 			}
 			mm.commandStop(which);
+		}
+
+		@Override
+		public String toString() {
+			return "TrainStop";
 		}
 
 	}
@@ -140,6 +158,7 @@ public abstract class StationInfo {
 
 		@Override
 		public void handle() throws IOException {
+			delay++;
 			if (delay > DELAY_COUNT) {
 				state = new TrainStart();
 				state.doExtra();
@@ -148,8 +167,14 @@ public abstract class StationInfo {
 
 		@Override
 		public void doExtra() throws IOException {
+			delay = 0;
 			// 发出换轨道命令
 			mm.commandSwitchMain(false);
+		}
+
+		@Override
+		public String toString() {
+			return "ForwardSwitchRail";
 		}
 
 	}
@@ -167,15 +192,20 @@ public abstract class StationInfo {
 
 		@Override
 		public void doExtra() throws IOException {
-			// TODO 需要知道是哪一个列车
 			// 发出列车出发命令
 			if(isSwitch()){
-				mm.commandBackward(i, 2);
+				mm.commandBackward(which, 2);//朝着A站台
 			}
 			else{
-				mm.commandForward(i, 1);
+				mm.commandForward(which, 1);//朝着B站台
 			}
 		}
+
+		@Override
+		public String toString() {
+			return "TrainStart";
+		}
+		
 	}
 
 	class TrainLeave implements State {
@@ -185,8 +215,11 @@ public abstract class StationInfo {
 
 			if (isSwitch()) {
 				// 转向BackwardSwitchRail
-				state = new BackwardSwitchRail();
-				state.doExtra();
+				if(delay > DELAY_COUNT){
+					state = new BackwardSwitchRail();
+					state.doExtra();
+				}
+				delay++;
 			} else {
 				// 转向InProgress
 				state = new InProgress();
@@ -197,8 +230,15 @@ public abstract class StationInfo {
 		@Override
 		public void doExtra() throws IOException {
 			// do nothing
-
+			delay = 0;
 		}
+
+		@Override
+		public String toString() {
+			return "TrainLeave";
+		}
+		
+		
 
 	}
 
@@ -218,6 +258,11 @@ public abstract class StationInfo {
 			mm.commandSwitchMain(true);
 		}
 
+		@Override
+		public String toString() {
+			return "BackwardSwitchRail";
+		}
+
 	}
 }
 
@@ -235,6 +280,12 @@ class SwitchStationInfo extends StationInfo {
 		stationIndex = 1;
 	}
 
+	@Override
+	public void push() throws IOException {
+		System.out.println(state.toString());
+		state.handle();
+	}
+	
 	@Override
 	public boolean isSwitch() {
 		return true;

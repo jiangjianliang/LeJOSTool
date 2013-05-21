@@ -9,9 +9,9 @@ public class TrainInfo {
 	private int destination;		//0 : none;		1 : sB;		2 : sA;
 	
 	public TrainInfo(){
-		speed = 3;
+		speed = 2;
 		state = 0;
-		position = 1;
+		position = 0;
 		destination = 0;
 	}
 	

@@ -28,7 +28,7 @@ public class MonitorView extends JFrame {
 	private static final long serialVersionUID = 3798395486791804473L;
 	private GraphicPanel graphicPanel;
 	private JPanel buttonsPanel;
-	private JButton btForwardA, btBackwardA, btStop, btForwardB, btBackwardB,
+	private JButton btForwardA, btBackwardA, btStart, btForwardB, btBackwardB,
 			btSpeedUp, btSpeedDown;
 	private TextArea infoArea;
 	private MonitorModel control;
@@ -48,9 +48,9 @@ public class MonitorView extends JFrame {
 		graphicPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		buttonsPanel = new JPanel(new GridLayout(3, 3, 5, 5));
 		buttonsPanel.setBorder(new TitledBorder("command buttons"));
-		btForwardA = new JButton("forward(A)");
-		btBackwardA = new JButton("backward(A)");
-		btStop = new JButton("stop");
+		btForwardA = new JButton("Switch to Main");
+		btBackwardA = new JButton("Switch to Branch");
+		btStart = new JButton("start");
 		btForwardB = new JButton("forward(B)");
 		btBackwardB = new JButton("backward(B)");
 		btSpeedUp = new JButton("speed up");
@@ -61,7 +61,7 @@ public class MonitorView extends JFrame {
 		buttonsPanel.add(btBackwardA);
 		buttonsPanel.add(btBackwardB);
 		buttonsPanel.add(btSpeedDown);
-		buttonsPanel.add(btStop);
+		buttonsPanel.add(btStart);
 		infoArea = new TextArea();
 		setLayout(new GridLayout(3, 1));
 		add(graphicPanel);
@@ -75,19 +75,14 @@ public class MonitorView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*
-				 * try { //System.out.println("update."); if (control.update())
-				 * updateGUI(); } catch (IOException e1) {
-				 * JOptionPane.showMessageDialog(null, "update error.", "ERROR",
-				 * JOptionPane.ERROR_MESSAGE); }
-				 */
+				
 				SwingWorker worker = new DistanceWorker();
 				worker.execute();
-
+				
 			}
 		});
 
-		timer.start();
+		//timer.start();
 		updateGUI();
 	}
 
@@ -127,8 +122,9 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandForward(0,3);
-					infoArea.setText("train is forward to A.");
+					control.commandSwitchMain(true);
+					//control.commandForward(0,3);
+					infoArea.setText("switch to Main.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "forward(A) error.",
 							"ERROR", JOptionPane.ERROR_MESSAGE);
@@ -141,8 +137,9 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandBackward(0,3);
-					infoArea.setText("train is backward to A.");
+					control.commandSwitchMain(false);
+					//control.commandBackward(0,3);
+					infoArea.setText("switch to Branch.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "backward(A) error.",
 							"ERROR", JOptionPane.ERROR_MESSAGE);
@@ -150,13 +147,15 @@ public class MonitorView extends JFrame {
 			}
 		});
 
-		btStop.addActionListener(new ActionListener() {
+		btStart.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				timer.start();
 				try {
-					control.commandStop(0);
-					infoArea.setText("train is stop.");
+					control.commandBackward(0, 1);
+					//control.commandStop(0);
+					//infoArea.setText("train is stop.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "stop error.", "ERROR",
 							JOptionPane.ERROR_MESSAGE);
@@ -260,7 +259,13 @@ public class MonitorView extends JFrame {
 		@Override
 		protected List doInBackground() throws Exception {
 			//从NXT处获取距离数据
+			try{
 			control.update();
+			}
+			catch(IOException e){
+				e.printStackTrace();
+				throw new Exception();
+			}
 			return null;
 		}
 
@@ -270,11 +275,11 @@ public class MonitorView extends JFrame {
 				// 这里可能需要通过timeout机制来保证响应
 				List<Integer> distanceList = get();
 			} catch (InterruptedException e) {
-				JOptionPane.showMessageDialog(null, "update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
-				//e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "InterruptedException update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
 			} catch (ExecutionException e) {
-				JOptionPane.showMessageDialog(null, "update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
-				//e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "ExecutionException update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
 			} finally {
 				updateGUI();
 			}

@@ -25,14 +25,13 @@ public class nxtSub {
 		LCD.drawString("distance:", 0, 1);
 		LCD.drawString("cmd:", 0, 2);
 		
-		TouchSensor touch = new TouchSensor(SensorPort.S3);
 		UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		CommandFactory cmdFactory = CommandFactory.getInstance();
 		while (true) {
 			try {
 				int cmd = pcDin.readInt();
 				LCD.drawInt(cmd, 4, 5, 2);
-				Command concreteCommand = cmdFactory.parseCommand(cmd, null, sonic, pcDout, touch);
+				Command concreteCommand = cmdFactory.parseCommand(cmd, null, sonic, pcDout);
 				if(!concreteCommand.execute()){
 					break;
 				}

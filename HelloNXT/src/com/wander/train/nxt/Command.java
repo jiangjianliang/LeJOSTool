@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
-import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 
 /**
@@ -23,7 +22,7 @@ public interface Command {
 	final static int TRAIN_STOP_B = -1;
 	
 	final static int UPDATE_ARRIVAL = 0;
-	//TODO 换轨道
+	//换轨道
 	final static int SWITCH_MAIN = 2;
 	final static int SWITCH_BRANCH = -2;
 	
@@ -127,8 +126,9 @@ class ChangeSpeedCommand implements Command {
 	
 	@Override
 	public boolean execute() {
-		link.sendPFSingleModePWM(channel,
-				IrLinkExt.PF_SINGLE_MODE_RED_PORT, cmd);
+		LCD.drawString(channel+"] speed "+ cmd, 0, 7);
+		link.sendPFSingleModePWM(channel-1,
+				IrLinkExt.PF_SINGLE_MODE_BLUE_PORT, cmd);
 		return true;
 	}
 
@@ -148,17 +148,15 @@ class UpdateDistanceCommand implements Command {
 	
 	private UltrasonicSensor sonic;
 	private DataOutputStream out;
-	private TouchSensor touch;
 	
-	private UpdateDistanceCommand(UltrasonicSensor sonic, DataOutputStream out, TouchSensor touch) {
+	private UpdateDistanceCommand(UltrasonicSensor sonic, DataOutputStream out) {
 		this.sonic = sonic;
 		this.out = out;
-		this.touch = touch;
 	}
 
-	public static UpdateDistanceCommand getInstance(UltrasonicSensor sonic, DataOutputStream out, TouchSensor touch){
+	public static UpdateDistanceCommand getInstance(UltrasonicSensor sonic, DataOutputStream out){
 		if(instance == null){
-			instance = new UpdateDistanceCommand(sonic, out, touch);
+			instance = new UpdateDistanceCommand(sonic, out);
 		}
 		return instance;
 	}
@@ -166,11 +164,10 @@ class UpdateDistanceCommand implements Command {
 	@Override
 	public boolean execute() {
 		int distance = sonic.getDistance();
-		int isPressed = touch.isPressed()?1:0;
 		LCD.drawInt(distance, 3, 10, 1);
 		try {
 			out.writeInt(distance);
-			out.writeInt(isPressed);
+			//out.writeInt(isPressed);
 			out.flush();
 		} catch (IOException e) {
 			LCD.drawString("ERROR WRITE!", 0, 6);
@@ -192,26 +189,26 @@ class SwitchCommand implements Command{
 	private static int DEGREE = 35;
 	
 	private SwitchCommand(){
-		Motor.A.setSpeed(DEGREE*3);
 	}
 	
-	public static SwitchCommand getInstance(boolean main){
-		instance.setSwitchMain(main);
+	public static SwitchCommand getInstance(boolean isMain){
+		instance.setSwitchMain(isMain);
 		return instance;
 	}
 	
 	@Override
 	public boolean execute() {
 		if(switchToMain){
-			//TODO 等待现场调试
-			
+			LCD.drawString("switch main", 0, 7);
+			Motor.A.setSpeed(DEGREE*3);
+			Motor.A.rotate(-DEGREE-15);
+			Motor.A.rotate(-5);
 		}
 		else{
-			//Motor.A.rotate();
-			
+			LCD.drawString("switch branch", 0, 7);
+			Motor.A.setSpeed(DEGREE*3);
+			Motor.A.rotate(DEGREE+10);
 		}
-		//Motor.A.rotate(DEGREE+10);
-		//Motor.A.rotate(-DEGREE-10);
 		return true;
 	}
 
