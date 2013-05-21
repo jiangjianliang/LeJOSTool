@@ -85,8 +85,10 @@ public class MonitorModel {
 		trainList[0] = new TrainInfo();
 		
 		// initialize station
-		stationList[0] = new SwitchStationInfo(255);
-		stationList[1] = new NormalStationInfo(255);
+		stationList[0] = new SwitchStationInfo(this, 255);
+		stationList[0].trainList = trainList;
+		stationList[1] = new NormalStationInfo(this, 255);
+		stationList[1].trainList = trainList;
 	}
 
 	/**
@@ -97,20 +99,13 @@ public class MonitorModel {
 	 */
 	public boolean update() throws IOException {
 		updateDistance();
-		int[] isPassList = new int[2];
+		//int[] isPassList = new int[2];
 		//新的业务逻辑
 		for(int i =0; i <stationList.length; i++){
+			stationList[i].push();
 			//是否经过站台
-			isPassList[i] = stationList[i].updateDistance();
+			//isPassList[i] = stationList[i].updateDistance();
 		}
-		//当发生了TouchSensor发生时，需要知道是哪一辆列车
-		
-		//TrainEnter-TrainLeave-TouchSensor-TrainStop-SwtichRail-TrainStart-TrainEnter-TrainLeave-SwitchRail
-		
-			//是否进入换轨状态
-			//int isIn = stationList[i].isIn;
-			//TODO 需要开始写代码
-			//这里有个状态机
 		
 			
 		for (int i = 0; i < stationList.length; i++) {
@@ -222,6 +217,17 @@ public class MonitorModel {
 		sender[1].flush();
 	}
 
+	public void commandSwitchMain(boolean flag) throws IOException {
+		if(flag){
+			sender[0].writeInt(Command.SWITCH_MAIN);
+			sender[0].flush();
+		}
+		else{
+			sender[0].writeInt(Command.SWITCH_BRANCH);
+			sender[0].flush();
+		}
+	}
+	
 	public int getTrainPos(int i) {
 		return trainList[i].getPosition();
 	}
