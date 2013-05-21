@@ -106,8 +106,6 @@ public class MonitorModel {
 		//int[] isPassList = new int[2];
 		for(int i =0; i <stationList.length; i++){
 			stationList[i].push();
-			//是否经过站台
-			//isPassList[i] = stationList[i].updateDistance();
 		}
 		return true;
 	}
@@ -117,15 +115,19 @@ public class MonitorModel {
 			sender[i].writeInt(Command.UPDATE_DISTANCE);
 			sender[i].flush();
 			stationList[i].distance = receiver[i].readInt();
-			//stationList[i].isIn = receiver[i].readInt();
 		}
 	}
 	
 	public void commandStop(int i) throws IOException {
 		trainList[i].setStop();
-		trainList[i].setDestination(trainList[i].getPosition());
-		sender[i].writeInt(0);
-		sender[i].flush();
+		//trainList[i].setDestination(trainList[i].getPosition());
+		if(i == 0){
+			sender[0].writeInt(Command.TRAIN_STOP_A);
+		}
+		else{
+			sender[0].writeInt(Command.TRAIN_STOP_B);
+		}
+		sender[0].flush();
 	}
 
 	public void commandForward(int i, int des) throws IOException {
@@ -181,10 +183,10 @@ public class MonitorModel {
 	}
 
 	public void commandExit() throws IOException {
-		sender[0].writeInt(Command.EXIT);
-		sender[1].writeInt(Command.EXIT);
-		sender[0].flush();
-		sender[1].flush();
+		for(int i=0; i < stationList.length; i++){
+			sender[i].writeInt(Command.EXIT);
+			sender[i].flush();			
+		}
 	}
 
 	public void commandSwitchMain(boolean flag) throws IOException {

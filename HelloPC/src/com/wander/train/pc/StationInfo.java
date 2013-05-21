@@ -2,38 +2,41 @@ package com.wander.train.pc;
 
 import java.io.IOException;
 
-public abstract class StationInfo {
+import com.wander.train.pc.state.Context;
+import com.wander.train.pc.state.InProgressState;
+import com.wander.train.pc.state.State;
+
+public abstract class StationInfo implements Context{
 
 	private MonitorModel mm;
 
-	public int distance;
-	public int isIn = 0;
 	public UltraSonic ultraSonic;
+	public int distance;
 
 	public TrainInfo[] trainList;
+	/**
+	 * 用于记录是哪一辆火车进站
+	 */
 	private int which;
 	
+	/**
+	 * 本站台的索引
+	 */
 	protected int stationIndex;
 	
-	protected State state = new InProgress();
+	
+	/**
+	 * 延迟
+	 */
 	private int delay = 0;
-	private int DELAY_COUNT = 5;
+	private final static int DELAY_COUNT = 5;
 
+	protected State state = new InProgressState(this);
+	
 	public StationInfo(MonitorModel mm, int dis) {
 		this.mm = mm;
 		distance = dis;
 		ultraSonic = new UltraSonic(dis);
-	}
-
-	public int updateDistance() {
-		return ultraSonic.update(distance);
-	}
-
-	/**
-	 * 推动状态机向前走的方法
-	 */
-	public void push() throws IOException {
-		state.handle();
 	}
 
 	/**
@@ -44,226 +47,88 @@ public abstract class StationInfo {
 	 */
 	class UltraSonic {
 		private int distance;
-
+		private final static int THRESH = 20;
 		public UltraSonic(int distance) {
 			this.distance = distance;
 		}
 
 		public int update(int dis) {
 			// train enter
-			if (distance > 15 && (distance = dis) <= 15)// TODO 15这个值需要修改
+			if (distance > THRESH && (distance = dis) <= THRESH)// TODO 20这个值需要修改
 				return 1;
 			// train leave
-			if (distance <= 15 && (distance = dis) > 15)
+			if (distance <= THRESH && (distance = dis) > THRESH)
 				return 2;
 			return 0;
 		}
 	}
+	
 
 	/**
-	 * 是否含有换轨控制
-	 * 
-	 * @return
+	 * 推动状态机向前走的方法
 	 */
-	public abstract boolean isSwitch();
-
-	interface State {
-		void handle() throws IOException;
-
-		void doExtra() throws IOException;
+	public void push() throws IOException {
+		state.handle();
 	}
-
-	class InProgress implements State {
-
-		@Override
-		public void handle() throws IOException {
-			// 进行某些计算
-			int result = updateDistance();
-			if (result == 1) {
-				state = new TrainEnter();
-				state.doExtra();
+	
+	
+	@Override
+	public void setState(State newState) throws IOException{
+		state = newState;
+		state.doExtra();
+	}
+	
+	@Override
+	public void resetDelay(){
+		delay = 0;
+	}
+	
+	@Override
+	public void incDelay(){
+		delay++;
+	}
+	
+	@Override
+	public boolean isExpired(){
+		return delay > DELAY_COUNT;
+	}
+	
+	@Override
+	public int updateDistance() {
+		return ultraSonic.update(distance);
+	}
+	
+	@Override
+	public void updateWhich() {
+		for(int i = 0; i < trainList.length; i++){
+			if(trainList[i].getDestination() == stationIndex){
+				//先记下是哪一辆火车要到达站台
+				which = i;
+				break;
 			}
 		}
-
-		@Override
-		public void doExtra() throws IOException {
-			// do nothing
-		}
-
-		@Override
-		public String toString() {
-			return "InProgress";
-		}
-		
 	}
 
-	class TrainEnter implements State {
-
-		@Override
-		public void handle() throws IOException {
-			state = new TrainStop();
-			state.doExtra();
-		}
-
-		@Override
-		public void doExtra() throws IOException {
-			// do nothing
-		}
-
-		@Override
-		public String toString() {
-			return "TrainEnter";
-		}
-		
-		
+	@Override
+	public void commandForward(int dest) throws IOException {
+		mm.commandForward(which, dest);
 	}
 
-	class TrainStop implements State {
-
-		@Override
-		public void handle() throws IOException {
-
-			if (isSwitch()) {
-				// 转向ForwardSwitchRail
-				state = new ForwardSwitchRail();
-				state.doExtra();
-			} else {
-				// 转向TrainStart
-				state = new TrainStart();
-				state.doExtra();
-			}
-		}
-
-		@Override
-		public void doExtra() throws IOException {
-			// 发出列车停止命令
-			for(int i = 0; i < trainList.length; i++){
-				if(trainList[i].getDestination() == stationIndex){
-					//先记下是哪一辆火车要到达站台
-					which = i;
-					break;
-				}
-			}
-			mm.commandStop(which);
-		}
-
-		@Override
-		public String toString() {
-			return "TrainStop";
-		}
-
+	@Override
+	public void commandBackward(int dest)  throws IOException {
+		mm.commandBackward(which, dest);
+	}
+	
+	@Override
+	public void commandStop() throws IOException {
+		mm.commandStop(which);
 	}
 
-	class ForwardSwitchRail implements State {
-
-		@Override
-		public void handle() throws IOException {
-			delay++;
-			if (delay > DELAY_COUNT) {
-				state = new TrainStart();
-				state.doExtra();
-			}
-		}
-
-		@Override
-		public void doExtra() throws IOException {
-			delay = 0;
-			// 发出换轨道命令
-			mm.commandSwitchMain(false);
-		}
-
-		@Override
-		public String toString() {
-			return "ForwardSwitchRail";
-		}
-
+	@Override
+	public void commandSwitchMain(boolean flag) throws IOException {
+		mm.commandSwitchMain(flag);
 	}
-
-	class TrainStart implements State {
-
-		@Override
-		public void handle() throws IOException {
-			int result = updateDistance();
-			if (result == 2) {
-				state = new TrainLeave();
-				state.doExtra();
-			}
-		}
-
-		@Override
-		public void doExtra() throws IOException {
-			// 发出列车出发命令
-			if(isSwitch()){
-				mm.commandBackward(which, 2);//朝着A站台
-			}
-			else{
-				mm.commandForward(which, 1);//朝着B站台
-			}
-		}
-
-		@Override
-		public String toString() {
-			return "TrainStart";
-		}
-		
-	}
-
-	class TrainLeave implements State {
-
-		@Override
-		public void handle() throws IOException {
-
-			if (isSwitch()) {
-				// 转向BackwardSwitchRail
-				if(delay > DELAY_COUNT){
-					state = new BackwardSwitchRail();
-					state.doExtra();
-				}
-				delay++;
-			} else {
-				// 转向InProgress
-				state = new InProgress();
-				state.doExtra();
-			}
-		}
-
-		@Override
-		public void doExtra() throws IOException {
-			// do nothing
-			delay = 0;
-		}
-
-		@Override
-		public String toString() {
-			return "TrainLeave";
-		}
-		
-		
-
-	}
-
-	class BackwardSwitchRail implements State {
-
-		@Override
-		public void handle() throws IOException {
-			// 转向InProgress
-			state = new InProgress();
-			state.doExtra();
-
-		}
-
-		@Override
-		public void doExtra() throws IOException {
-			//切换轨道
-			mm.commandSwitchMain(true);
-		}
-
-		@Override
-		public String toString() {
-			return "BackwardSwitchRail";
-		}
-
-	}
+	
 }
 
 /**
@@ -273,7 +138,7 @@ public abstract class StationInfo {
  * 
  */
 class SwitchStationInfo extends StationInfo {
-	// TrainEnter-TrainStop-SwtichRail-TrainStart-TrainLeave-SwitchRail
+	// TrainEnter-TrainStop-RailSwtich-TrainStart-TrainLeave-RailSwitch
 
 	public SwitchStationInfo(MonitorModel mm, int dis) {
 		super(mm, dis);
