@@ -37,7 +37,8 @@ public class nxtMain {
 		//UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		
 		CommandFactory cmdFactory = CommandFactory.getInstance();
-		
+		CommandExecutor cmdExecutor = new CommandExecutor();
+		cmdExecutor.start();
 		//int count = 0;
 		while (true) {
 			try {
@@ -51,11 +52,14 @@ public class nxtMain {
 					count++;
 				}
 				*/
+				cmdExecutor.addCommand(concreteCommand);
+				/*
 				boolean result = concreteCommand.execute();
 				if( !result){
 					break;
 				}
-				
+				*/
+				//Thread.sleep(100);
 			}
 			 catch (Exception e) {
 				LCD.drawString("ERROR READ!", 0, 7);

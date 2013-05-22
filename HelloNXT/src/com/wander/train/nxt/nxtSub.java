@@ -31,14 +31,19 @@ public class nxtSub {
 		TouchSensor touch = new TouchSensor(SensorPort.S3);
 		//UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		CommandFactory cmdFactory = CommandFactory.getInstance();
+		CommandExecutor cmdExecutor = new CommandExecutor();
+		cmdExecutor.start();
 		while (true) {
 			try {
 				int cmd = pcDin.readInt();
 				LCD.drawInt(cmd, 4, 5, 2);
 				Command concreteCommand = cmdFactory.parseCommand(cmd, null, null, pcDout, touch);
+				cmdExecutor.addCommand(concreteCommand);
+				/*
 				if(!concreteCommand.execute()){
 					break;
 				}
+				*/
 			} catch (IOException e) {
 				LCD.drawString("ERROR READ!", 0, 7);
 				break;

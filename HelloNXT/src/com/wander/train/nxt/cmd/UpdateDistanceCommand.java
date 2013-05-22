@@ -10,9 +10,8 @@ import lejos.nxt.UltrasonicSensor;
 
 /**
  * 更新距离的命令
- * 
  * @author wander
- * 
+ * @deprecated
  */
 class UpdateDistanceCommand implements Command {
 	private static UpdateDistanceCommand instance = null;
