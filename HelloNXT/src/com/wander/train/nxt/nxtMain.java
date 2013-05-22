@@ -39,7 +39,7 @@ public class nxtMain {
 			try {
 				
 				int cmd =  pcDin.readInt();
-				LCD.drawInt(cmd, 4, 5, 2);
+				LCD.drawInt(cmd, 6, 5, 2);
 				
 				Command concreteCommand = cmdFactory.parseCommand(cmd, link, sonic, pcDout);
 				boolean result = concreteCommand.execute();
@@ -49,8 +49,8 @@ public class nxtMain {
 				
 			}
 			 catch (Exception e) {
-			 
 				LCD.drawString("ERROR READ!", 0, 7);
+				break;
 			}
 			
 		}

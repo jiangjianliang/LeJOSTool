@@ -9,7 +9,7 @@ public class TrainInfo {
 	private int destination;		//0 : none;		1 : sB;		2 : sA;
 	
 	public TrainInfo(){
-		speed = 2;
+		speed = 3;
 		state = 0;
 		position = 0;
 		destination = 0;

@@ -29,7 +29,7 @@ public abstract class StationInfo implements Context{
 	 * 延迟
 	 */
 	private int delay = 0;
-	private final static int DELAY_COUNT = 5;
+	private final static int DELAY_COUNT = 8;
 
 	protected State state = new InProgressState(this);
 	
@@ -47,14 +47,14 @@ public abstract class StationInfo implements Context{
 	 */
 	class UltraSonic {
 		private int distance;
-		private final static int THRESH = 20;
+		private final static int THRESH = 15;
 		public UltraSonic(int distance) {
 			this.distance = distance;
 		}
 
 		public int update(int dis) {
 			// train enter
-			if (distance > THRESH && (distance = dis) <= THRESH)// TODO 20这个值需要修改
+			if (distance > THRESH && (distance = dis) <= THRESH)// TODO 15这个值需要修改
 				return 1;
 			// train leave
 			if (distance <= THRESH && (distance = dis) > THRESH)
@@ -100,6 +100,7 @@ public abstract class StationInfo implements Context{
 	
 	@Override
 	public void updateWhich() {
+		System.err.println("in updateWhich");
 		for(int i = 0; i < trainList.length; i++){
 			if(trainList[i].getDestination() == stationIndex){
 				//先记下是哪一辆火车要到达站台
@@ -107,25 +108,30 @@ public abstract class StationInfo implements Context{
 				break;
 			}
 		}
+		System.err.println("which is "+ which);
 	}
 
 	@Override
 	public void commandForward(int dest) throws IOException {
+		//System.err.println("in commandForward + "+ dest);
 		mm.commandForward(which, dest);
 	}
 
 	@Override
 	public void commandBackward(int dest)  throws IOException {
+		//System.err.println("in commandBackward + "+ dest);
 		mm.commandBackward(which, dest);
 	}
 	
 	@Override
 	public void commandStop() throws IOException {
+		//System.err.println("in commandStop + "+ which);
 		mm.commandStop(which);
 	}
 
 	@Override
 	public void commandSwitchMain(boolean flag) throws IOException {
+		//System.err.println("in commandSwitch + "+ flag);
 		mm.commandSwitchMain(flag);
 	}
 	

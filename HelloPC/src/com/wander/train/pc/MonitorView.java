@@ -23,12 +23,14 @@ import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
+import com.wander.train.pc.state.TrainLeaveState;
+
 public class MonitorView extends JFrame {
 
 	private static final long serialVersionUID = 3798395486791804473L;
 	private GraphicPanel graphicPanel;
 	private JPanel buttonsPanel;
-	private JButton btForwardA, btBackwardA, btStart, btForwardB, btBackwardB,
+	private JButton btSwitchMain, btSwitchBranch, btStart, btForwardB, btBackwardB, btStop,
 			btSpeedUp, btSpeedDown;
 	private TextArea infoArea;
 	private MonitorModel control;
@@ -48,20 +50,23 @@ public class MonitorView extends JFrame {
 		graphicPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		buttonsPanel = new JPanel(new GridLayout(3, 3, 5, 5));
 		buttonsPanel.setBorder(new TitledBorder("command buttons"));
-		btForwardA = new JButton("Switch to Main");
-		btBackwardA = new JButton("Switch to Branch");
-		btStart = new JButton("start");
+		btSwitchMain = new JButton("Switch to Main");
+		btSwitchBranch = new JButton("Switch to Branch");
+		btStart = new JButton("Start");
+		btStop = new JButton("Stop");
 		btForwardB = new JButton("forward(B)");
 		btBackwardB = new JButton("backward(B)");
 		btSpeedUp = new JButton("speed up");
 		btSpeedDown = new JButton("speed down");
-		buttonsPanel.add(btForwardA);
+		buttonsPanel.add(btSwitchMain);
 		buttonsPanel.add(btForwardB);
 		buttonsPanel.add(btSpeedUp);
-		buttonsPanel.add(btBackwardA);
+		buttonsPanel.add(btSwitchBranch);
 		buttonsPanel.add(btBackwardB);
 		buttonsPanel.add(btSpeedDown);
 		buttonsPanel.add(btStart);
+		buttonsPanel.add(btStop);
+		
 		infoArea = new TextArea();
 		setLayout(new GridLayout(3, 1));
 		add(graphicPanel);
@@ -71,7 +76,7 @@ public class MonitorView extends JFrame {
 		addListener();
 		control = new MonitorModel();
 
-		timer = new Timer(200, new ActionListener() {
+		timer = new Timer(400, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -117,7 +122,7 @@ public class MonitorView extends JFrame {
 	}
 
 	private void addListener() {
-		btForwardA.addActionListener(new ActionListener() {
+		btSwitchMain.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -132,7 +137,7 @@ public class MonitorView extends JFrame {
 			}
 		});
 
-		btBackwardA.addActionListener(new ActionListener() {
+		btSwitchBranch.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -157,18 +162,34 @@ public class MonitorView extends JFrame {
 					//control.commandStop(0);
 					//infoArea.setText("train is stop.");
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "stop error.", "ERROR",
+					JOptionPane.showMessageDialog(null, "start error.", "ERROR",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
+		
+		btStop.addActionListener(new ActionListener(){
 
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				timer.stop();
+				try{
+					control.commandStop(0);
+					//control.commandStop(1);
+				}
+				catch(IOException e1){
+					JOptionPane.showMessageDialog(null, "stop error.", "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			
+		});
 		btForwardB.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandForward(0,1);
+					control.commandBackward(0,1);
 					infoArea.setText("train is forward to B.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "forward(B) error.",
@@ -182,7 +203,7 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					control.commandBackward(0,1);
+					control.commandForward(0,2);
 					infoArea.setText("train is backward to A.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "backward(B) error.",

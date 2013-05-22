@@ -2,6 +2,7 @@ package com.wander.train.nxt;
 
 import java.io.DataOutputStream;
 
+import lejos.nxt.LCD;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 /**
@@ -61,8 +62,8 @@ public class CommandFactory {
 			{
 				newSpeed = 16 - speed;
 			}
-			
-			if(Math.abs(cmd) > Command.TRAIN_MARK_A){
+			LCD.drawInt(newSpeed, 0, 5);
+			if(cmd > Command.TRAIN_MARK_A){
 				result = ChangeSpeedCommand.getInstance(newSpeed, link, 1);				
 			}
 			else{

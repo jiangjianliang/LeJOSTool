@@ -23,6 +23,7 @@ public class TrainStopState extends State {
 
 	@Override
 	public void doExtra() throws IOException {
+		context.updateWhich();
 		// 发出列车停止命令
 		context.commandStop();
 	}

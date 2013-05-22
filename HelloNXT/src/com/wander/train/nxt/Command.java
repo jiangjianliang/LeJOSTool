@@ -82,14 +82,14 @@ class TrainStopCommand implements Command {
 		if(instance == null){
 			instance = new TrainStopCommand(link);
 		}
-		instance.setChannel(channel);
+		instance.setChannel(channel-1);
 		return instance;
 	}
 	
 	@Override
 	public boolean execute() {
 		link.sendPFSingleModePWM(channel,
-				IrLinkExt.PF_SINGLE_MODE_RED_PORT, IrLinkExt.PF_PMW_FLOAT);
+				IrLinkExt.PF_SINGLE_MODE_BLUE_PORT, IrLinkExt.PF_PMW_FLOAT);
 		return true;
 	}
 
@@ -120,16 +120,22 @@ class ChangeSpeedCommand implements Command {
 		if(instance == null){
 			instance = new ChangeSpeedCommand(cmd, link);
 		}
-		instance.setChannel(channel);
+		instance.setCmd(cmd);
+		instance.setChannel(channel-1);
 		return instance;
 	}
 	
 	@Override
 	public boolean execute() {
-		LCD.drawString(channel+"] speed "+ cmd, 0, 7);
-		link.sendPFSingleModePWM(channel-1,
+		LCD.drawString(channel+"] speed ", 0, 7);
+		LCD.drawInt(cmd, 2, 9, 7);
+		link.sendPFSingleModePWM(channel,
 				IrLinkExt.PF_SINGLE_MODE_BLUE_PORT, cmd);
 		return true;
+	}
+
+	public void setCmd(int cmd) {
+		this.cmd = cmd;
 	}
 
 	public void setChannel(int channel) {
@@ -202,7 +208,7 @@ class SwitchCommand implements Command{
 			LCD.drawString("switch main", 0, 7);
 			Motor.A.setSpeed(DEGREE*3);
 			Motor.A.rotate(-DEGREE-15);
-			Motor.A.rotate(-5);
+			Motor.A.rotate(5);
 		}
 		else{
 			LCD.drawString("switch branch", 0, 7);

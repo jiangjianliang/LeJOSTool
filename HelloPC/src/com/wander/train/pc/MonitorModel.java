@@ -29,7 +29,8 @@ public class MonitorModel {
 	}
 
 	private void init() {
-		stationList = new StationInfo[2]; // 0 : sA; 1 : sB;
+		stationList = new StationInfo[1];
+		//stationList = new StationInfo[2]; // 0 : sA; 1 : sB;
 		trainList = new TrainInfo[2];
 
 		boolean connected_1 = false;
@@ -59,10 +60,12 @@ public class MonitorModel {
 					.createNXTComm(NXTCommFactory.BLUETOOTH);
 			connected_1 = pcNxtList[0].open(nxt_1);
 			
+			connected_2 = true;
+			/*
 			pcNxtList[1] = NXTCommFactory
 					.createNXTComm(NXTCommFactory.BLUETOOTH);			
 			connected_2 = pcNxtList[1].open(nxt_2);
-						
+			*/
 		} catch (NXTCommException e) {
 			e.printStackTrace();
 		}
@@ -74,15 +77,13 @@ public class MonitorModel {
 		}
 
 		// initialize input and output
-		sender = new DataOutputStream[2];
-		receiver = new DataInputStream[2];
+		sender = new DataOutputStream[stationList.length];
+		receiver = new DataInputStream[stationList.length];
 		
-		sender[0] = new DataOutputStream(pcNxtList[0].getOutputStream());
-		receiver[0] = new DataInputStream(pcNxtList[0].getInputStream());
-		
-		
-		sender[1] = new DataOutputStream(pcNxtList[1].getOutputStream());
-		receiver[1] = new DataInputStream(pcNxtList[1].getInputStream());
+		for(int i=0; i < stationList.length; i++){			
+			sender[i] = new DataOutputStream(pcNxtList[i].getOutputStream());
+			receiver[i] = new DataInputStream(pcNxtList[i].getInputStream());
+		}
 
 		// initialize train
 		trainList[0] = new TrainInfo();
@@ -91,8 +92,10 @@ public class MonitorModel {
 		// initialize station
 		stationList[0] = new SwitchStationInfo(this, 255);
 		stationList[0].trainList = trainList;
+		/*
 		stationList[1] = new NormalStationInfo(this, 255);
 		stationList[1].trainList = trainList;
+		*/
 	}
 
 	/**
@@ -111,10 +114,17 @@ public class MonitorModel {
 	}
 
 	private void updateDistance() throws IOException {
-		for (int i = 0; i < stationList.length; i++) {
-			sender[i].writeInt(Command.UPDATE_DISTANCE);
-			sender[i].flush();
-			stationList[i].distance = receiver[i].readInt();
+		try{
+			for (int i = 0; i < stationList.length; i++) {
+				sender[i].writeInt(Command.UPDATE_DISTANCE);
+				sender[i].flush();
+				System.err.println(i);
+				stationList[i].distance = receiver[i].readInt();
+			}
+		}
+		catch (IOException e){
+			//TODO do nothing
+			System.err.println("update distance");
 		}
 	}
 	
@@ -130,24 +140,28 @@ public class MonitorModel {
 		sender[0].flush();
 	}
 
-	public void commandForward(int i, int des) throws IOException {
-		trainList[i].setDestination(des);
+	public void commandForward(int i, int dest) throws IOException {
+		System.err.println("forward ["+i+"],"+dest);
+		trainList[i].setDestination(dest);
 		trainList[i].setForward();
 		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
 		if(i == 0){
 			cmd +=Command.TRAIN_MARK_A;
-		}
+		}		
+		System.err.println(cmd);
 		sender[0].writeInt(cmd);
 		sender[0].flush();
 	}
 
-	public void commandBackward(int i, int des) throws IOException {
-		trainList[i].setDestination(des);
+	public void commandBackward(int i, int dest) throws IOException {
+		System.err.println("backward ["+i+"],"+dest);
+		trainList[i].setDestination(dest);
 		trainList[i].setBackward();
 		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
 		if(i == 0){
 			cmd +=Command.TRAIN_MARK_A;
-		}
+		}		
+		System.err.println(-cmd);
 		sender[0].writeInt(-cmd);
 		sender[0].flush();
 	}
