@@ -121,6 +121,8 @@ public class MonitorModel {
 				sender[i].writeInt(Command.UPDATE_DISTANCE);
 				sender[i].flush();
 				stationList[i].distance = receiver[i].readInt();
+				//TODO test
+				System.err.println(i+"]"+stationList[i].distance);
 			} catch (IOException e) {
 				// TODO do nothing
 				System.err.println(i+" update distance");

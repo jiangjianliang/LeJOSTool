@@ -29,7 +29,7 @@ public class CommandFactory {
 	 * @param out
 	 * @return
 	 */
-	public Command parseCommand(int cmd, IrLinkExt link, UltrasonicSensor sonic, DataOutputStream out){
+	public Command parseCommand(int cmd, IrLinkExt link, UltrasonicSensor sonic, DataOutputStream out, TouchSensor touch){
 		Command result = null;
 		switch(cmd){
 		case Command.EXIT:
@@ -42,7 +42,8 @@ public class CommandFactory {
 			result = TrainStopCommand.getInstance(link, 2);
 			break;
 		case Command.UPDATE_DISTANCE:
-			result = UpdateDistanceCommand.getInstance(sonic, out);
+			result = ArriveCommand.getInstance(touch, out);
+			//result = UpdateDistanceCommand.getInstance(sonic, out);
 			break;
 		case Command.SWITCH_MAIN:
 			result = SwitchCommand.getInstance(true);

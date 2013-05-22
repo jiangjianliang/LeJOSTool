@@ -246,7 +246,7 @@ class ArriveCommand implements Command {
 		this.out = out;
 	}
 
-	public ArriveCommand getInstance(TouchSensor touch, DataOutputStream out) {
+	public static ArriveCommand getInstance(TouchSensor touch, DataOutputStream out) {
 		if (instance == null) {
 			instance = new ArriveCommand(touch, out);
 		}

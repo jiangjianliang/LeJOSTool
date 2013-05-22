@@ -29,7 +29,7 @@ public abstract class StationInfo implements Context{
 	 * 延迟
 	 */
 	private int delay = 0;
-	private final static int DELAY_COUNT = 8;
+	private final static int DELAY_COUNT = 5;
 
 	protected State state;
 	
@@ -51,11 +51,30 @@ public abstract class StationInfo implements Context{
 	class UltraSonic {
 		private int distance;
 		private final static int THRESH = 15;
+		private final static int PRESS = 1;
+		private final static int RELEASE = 0;
 		public UltraSonic(int distance) {
 			this.distance = distance;
 		}
 
 		public int update(int dis) {
+			if(dis == PRESS){
+				return 1;
+			}
+			else if(dis == RELEASE){
+				return 2;
+			}
+			return 0;
+			/*
+			if(distance == RELEASE && (distance = dis) == PRESS){
+				return 1;
+			}
+			else if(distance == PRESS && (distance = dis) == RELEASE){
+				
+			}
+			return 0;
+			*/
+			/*
 			// train enter
 			if (distance > THRESH && (distance = dis) <= THRESH)// TODO 15这个值需要修改
 				return 1;
@@ -63,6 +82,7 @@ public abstract class StationInfo implements Context{
 			if (distance <= THRESH && (distance = dis) > THRESH)
 				return 2;
 			return 0;
+			*/
 		}
 	}
 	

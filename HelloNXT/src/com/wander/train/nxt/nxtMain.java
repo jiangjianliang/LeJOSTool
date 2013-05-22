@@ -29,8 +29,8 @@ public class nxtMain {
 		LCD.drawString("cmd:", 0, 2);
 		
 		IrLinkExt link = new IrLinkExt(SensorPort.S1);
-		//TouchSensor touch = new TouchSensor(SensorPort.S3);
-		UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
+		TouchSensor touch = new TouchSensor(SensorPort.S3);
+		//UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		
 		CommandFactory cmdFactory = CommandFactory.getInstance();
 		//Test test = Test.getInstance();
@@ -41,7 +41,7 @@ public class nxtMain {
 				int cmd =  pcDin.readInt();
 				LCD.drawInt(cmd, 6, 5, 2);
 				
-				Command concreteCommand = cmdFactory.parseCommand(cmd, link, sonic, pcDout);
+				Command concreteCommand = cmdFactory.parseCommand(cmd, link, null, pcDout, touch);
 				
 				if(concreteCommand instanceof ChangeSpeedCommand){
 					count++;
