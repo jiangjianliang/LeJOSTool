@@ -6,7 +6,7 @@ import com.wander.train.pc.state.Context;
 import com.wander.train.pc.state.InProgressState;
 import com.wander.train.pc.state.State;
 
-public abstract class StationInfo implements Context{
+public class StationInfo implements Context{
 
 	private MonitorModel mm;
 
@@ -23,24 +23,39 @@ public abstract class StationInfo implements Context{
 	 * 本站台的索引
 	 */
 	protected int stationIndex;
-	
+	/**
+	 * 自动增长的编号
+	 */
+	private static int sIndex = 0;
 	
 	/**
 	 * 延迟
 	 */
 	private int delay = 0;
 	private final static int DELAY_COUNT = 5;
-
+	/**
+	 * 保持状态机的变量
+	 */
 	protected State state;
+	/**
+	 * 表明是否为交换站点的标记
+	 * true:	TrainEnter-TrainStop-RailSwtich-TrainStart-TrainLeave-RailSwitch
+	 * false:	TrainEnter-TrainStop-TrainStart-TrainLeave
+	 */
+	private boolean isSwitch = false;
 	
-	public StationInfo(MonitorModel mm, int dis) {
+	public StationInfo(MonitorModel mm, int dis, boolean isSwitch) {
 		this.mm = mm;
 		distance = dis;
+		this.isSwitch = isSwitch;
 		ultraSonic = new UltraSonic(dis);
 		resetState();
 	}
 
-	
+	@Override
+	public boolean isSwitch() {
+		return isSwitch;
+	}
 	
 	/**
 	 * 判断距离变化的类
@@ -165,47 +180,7 @@ public abstract class StationInfo implements Context{
 		//System.err.println("in commandSwitch + "+ flag);
 		mm.commandSwitchMain(flag);
 	}
+
+
 	
-}
-
-/**
- * 含有换轨的站台
- * 
- * @author wander
- * 
- */
-class SwitchStationInfo extends StationInfo {
-	// TrainEnter-TrainStop-RailSwtich-TrainStart-TrainLeave-RailSwitch
-
-	public SwitchStationInfo(MonitorModel mm, int dis) {
-		super(mm, dis);
-		stationIndex = 1;
-	}
-	
-	@Override
-	public boolean isSwitch() {
-		return true;
-	}
-
-}
-
-/**
- * 不含有换轨的站台
- * 
- * @author wander
- * 
- */
-class NormalStationInfo extends StationInfo {
-	// TrainEnter-TrainStop-TrainStart-TrainLeave
-
-	public NormalStationInfo(MonitorModel mm, int dis) {
-		super(mm, dis);
-		stationIndex = 2;
-	}
-
-	@Override
-	public boolean isSwitch() {
-		return false;
-	}
-
 }

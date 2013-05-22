@@ -1,6 +1,8 @@
-package com.wander.train.nxt;
+package com.wander.train.nxt.cmd;
 
 import java.io.DataOutputStream;
+
+import com.wander.train.nxt.IrLinkExt;
 
 import lejos.nxt.LCD;
 import lejos.nxt.TouchSensor;

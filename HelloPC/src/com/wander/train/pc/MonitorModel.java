@@ -12,93 +12,122 @@ import lejos.pc.comm.NXTInfo;
 
 public class MonitorModel {
 	
+	//配置参数 
+	/**
+	 * 站点数量
+	 */
+	private static int STATION_NUM = 2;
+	/**
+	 * 火车数量
+	 */
+	private static int TRAIN_NUM = 2;
+	/**
+	 * SWITCH站点的编号
+	 */
+	private static int SWITCH_INDEX  = 0;
+	/**
+	 * 连接方式
+	 * 0 USB, 1 BLUETOOTH
+	 */
+	private static int CONN_TYPE = 1;
+	/**
+	 * NXT的Mac地址
+	 */
+	private NXTInfo[] nxts = new NXTInfo[3];
+	{
+		nxts[0] = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT1",
+			"00:16:53:10:40:a7");
+		nxts[1] = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT2",
+			"00:16:53:13:3a:1f");
+		nxts[2] = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT3",
+			"00:16:53:09:78:1f");
+	}
+	
+	//实例成员
+	
 	public StationInfo[] stationList;
 	public DataOutputStream[] sender;
 	private DataInputStream[] receiver;
 	
+	// private NXTConnector[] pcNxtList;
+	private NXTComm[] pcNxtList;
+
 	/*
 	 * 假定同方向上有TrainInfo[0]早于TrainInfo[1]， 也就是TrainInfo[0]会更早到达它们的共同站点
 	 */
 	public TrainInfo[] trainList;
-
-
-	// private NXTConnector[] pcNxtList;
-	private NXTComm[] pcNxtList;
-
+	
+	
 	public MonitorModel() {
 		init();
 	}
 
 	private void init() {
-		//TODO test
-		//stationList = new StationInfo[1];
-		stationList = new StationInfo[2]; // 0 : sA; 1 : sB;
-		trainList = new TrainInfo[1];
-		//trainList = new TrainInfo[2];
+		
+		stationList = new StationInfo[STATION_NUM]; // 0 : sA; 1 : sB;
+		trainList = new TrainInfo[TRAIN_NUM];
+		
+		sender = new DataOutputStream[STATION_NUM];
+		receiver = new DataInputStream[STATION_NUM];
+		
+		// initialize train
+		for(int i=0; i < trainList.length; i++){
+			trainList[i] = new TrainInfo();
+		}
 
-		boolean connected_1 = false;
-		boolean connected_2 = false;
-		boolean connected_3 = false;
+		// initialize station
+		for(int i=0; i < stationList.length; i++){
+			if(i == SWITCH_INDEX){
+				stationList[i] = new StationInfo(this, 255, true);
+			}
+			else{
+				stationList[i] = new StationInfo(this, 255, false);
+			}
+			stationList[i].trainList = trainList;
+		}
+	}
 
-		NXTInfo nxt_1 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT2",
-				"00:16:53:10:40:a7");
-
-		NXTInfo nxt_2 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT3",
-				"00:16:53:13:3a:1f");
-
-		NXTInfo nxt_3 = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT1",
-				"00:16:53:09:78:1f");
+	private void connect(){
+		boolean[] connected = new boolean[stationList.length];
+		
 		/*
 		 * pcNxtList = new NXTConnector[2]; // initialize NXT connection
 		 * pcNxtList[0] = new NXTConnector(); pcNxtList[1] = new NXTConnector();
 		 * connected_1 = pcNxtList[0].connectTo("bt://NXT"); connected_2 =
 		 * pcNxtList[1].connectTo("bt://NXT_OF");
 		 */
-		// /*
-		pcNxtList = new NXTComm[2];
-		try {
-			pcNxtList[0] = NXTCommFactory
-					.createNXTComm(NXTCommFactory.BLUETOOTH);
-			connected_1 = pcNxtList[0].open(nxt_1);
-
-			connected_2 = true;
-
-			pcNxtList[1] = NXTCommFactory
-					.createNXTComm(NXTCommFactory.BLUETOOTH);
-			connected_2 = pcNxtList[1].open(nxt_2);
-
-		} catch (NXTCommException e) {
-			e.printStackTrace();
-		}
-		// */
-
-		if (!connected_1 || !connected_2) {
-			System.err.println("error while connection to NXT.");
-			System.exit(-1);
-		}
-
+		
+		pcNxtList = new NXTComm[STATION_NUM];
+		
 		// initialize input and output
-		sender = new DataOutputStream[stationList.length];
-		receiver = new DataInputStream[stationList.length];
-
-		for (int i = 0; i < stationList.length; i++) {
-			sender[i] = new DataOutputStream(pcNxtList[i].getOutputStream());
-			receiver[i] = new DataInputStream(pcNxtList[i].getInputStream());
+		if( CONN_TYPE == 0){
+			
 		}
+		else if(CONN_TYPE == 1){
+			boolean total = true;
+			try {
+				for(int i = 0; i < stationList.length; i++){
+					pcNxtList[i] = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+					connected[i] = pcNxtList[i].open(nxts[i]);
+					total = total && connected[i];
+				}
 
-		// initialize train
-		trainList[0] = new TrainInfo();
-		//trainList[1] = new TrainInfo();
+			} catch (NXTCommException e) {
+				e.printStackTrace();
+			}
 
-		// initialize station
-		stationList[0] = new SwitchStationInfo(this, 255);
-		stationList[0].trainList = trainList;
-
-		stationList[1] = new NormalStationInfo(this, 255);
-		stationList[1].trainList = trainList;
-
+			if (!total) {
+				System.err.println("error while connection to NXT.");
+				System.exit(-1);
+			}
+			
+			for (int i = 0; i < stationList.length; i++) {
+				sender[i] = new DataOutputStream(pcNxtList[i].getOutputStream());
+				receiver[i] = new DataInputStream(pcNxtList[i].getInputStream());
+			}
+		}
 	}
-
+	
 	/**
 	 * 在DistanceWorker.doInBackground中调用
 	 * 

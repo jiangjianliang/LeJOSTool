@@ -1,6 +1,6 @@
 package com.wander.train.nxt.test;
 
-import com.wander.train.nxt.Command;
+import com.wander.train.nxt.cmd.Command;
 
 import lejos.nxt.Motor;
 

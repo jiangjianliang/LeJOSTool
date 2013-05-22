@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import com.wander.train.nxt.cmd.Command;
+import com.wander.train.nxt.cmd.CommandFactory;
+
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
@@ -13,6 +16,7 @@ import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 //import lejos.nxt.comm.USB;
+
 
 public class nxtMain {
 	public static void main(String[] args) {
@@ -33,8 +37,8 @@ public class nxtMain {
 		//UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		
 		CommandFactory cmdFactory = CommandFactory.getInstance();
-		//Test test = Test.getInstance();
-		int count = 0;
+		
+		//int count = 0;
 		while (true) {
 			try {
 				
@@ -42,11 +46,11 @@ public class nxtMain {
 				LCD.drawInt(cmd, 6, 5, 2);
 				
 				Command concreteCommand = cmdFactory.parseCommand(cmd, link, null, pcDout, touch);
-				
+				/*
 				if(concreteCommand instanceof ChangeSpeedCommand){
 					count++;
 				}
-				
+				*/
 				boolean result = concreteCommand.execute();
 				if( !result){
 					break;
@@ -59,7 +63,8 @@ public class nxtMain {
 			}
 			
 		}
-		LCD.drawString("good "+ count, 5, 4);
+		//LCD.drawString("good "+ count, 5, 4);
+		LCD.drawString("good bye", 5, 4);
 		Button.waitForAnyPress();
 		 
 	}
