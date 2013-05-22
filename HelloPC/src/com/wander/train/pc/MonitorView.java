@@ -37,6 +37,8 @@ public class MonitorView extends JFrame {
 
 	private Timer timer;
 
+	private int count = 0;
+	
 	public static void main(String[] args) {
 		MonitorView pcGUI = new MonitorView();
 		pcGUI.setSize(360, 500);
@@ -76,7 +78,7 @@ public class MonitorView extends JFrame {
 		addListener();
 		control = new MonitorModel();
 
-		timer = new Timer(400, new ActionListener() {
+		timer = new Timer(300, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -143,7 +145,6 @@ public class MonitorView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					control.commandSwitchMain(false);
-					//control.commandBackward(0,3);
 					infoArea.setText("switch to Branch.");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "backward(A) error.",
@@ -158,9 +159,11 @@ public class MonitorView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				timer.start();
 				try {
+					//TODO 测试这条语句执行次数
+					count++;
+					control.stationList[0].resetState();
 					control.commandBackward(0, 1);
-					//control.commandStop(0);
-					//infoArea.setText("train is stop.");
+					infoArea.setText("start");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "start error.", "ERROR",
 							JOptionPane.ERROR_MESSAGE);
@@ -175,7 +178,7 @@ public class MonitorView extends JFrame {
 				timer.stop();
 				try{
 					control.commandStop(0);
-					//control.commandStop(1);
+					infoArea.setText("stop");
 				}
 				catch(IOException e1){
 					JOptionPane.showMessageDialog(null, "stop error.", "ERROR",
@@ -184,6 +187,7 @@ public class MonitorView extends JFrame {
 			}
 			
 		});
+		/*
 		btForwardB.addActionListener(new ActionListener() {
 
 			@Override
@@ -211,7 +215,7 @@ public class MonitorView extends JFrame {
 				}
 			}
 		});
-
+*/
 		btSpeedUp.addActionListener(new ActionListener() {
 
 			@Override
@@ -281,7 +285,8 @@ public class MonitorView extends JFrame {
 		protected List doInBackground() throws Exception {
 			//从NXT处获取距离数据
 			try{
-			control.update();
+				control.update();
+				System.err.println("count "+count);
 			}
 			catch(IOException e){
 				e.printStackTrace();

@@ -37,6 +37,7 @@ public class nxtSub {
 				}
 			} catch (IOException e) {
 				LCD.drawString("ERROR READ!", 0, 7);
+				break;
 			}
 		}
 		try {

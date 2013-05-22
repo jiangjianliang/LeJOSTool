@@ -42,6 +42,11 @@ public class nxtMain {
 				LCD.drawInt(cmd, 6, 5, 2);
 				
 				Command concreteCommand = cmdFactory.parseCommand(cmd, link, sonic, pcDout);
+				
+				if(concreteCommand instanceof ChangeSpeedCommand){
+					count++;
+				}
+				
 				boolean result = concreteCommand.execute();
 				if( !result){
 					break;
@@ -54,7 +59,7 @@ public class nxtMain {
 			}
 			
 		}
-		LCD.drawString("good bye", 5, 4);
+		LCD.drawString("good "+ count, 5, 4);
 		Button.waitForAnyPress();
 		 
 	}

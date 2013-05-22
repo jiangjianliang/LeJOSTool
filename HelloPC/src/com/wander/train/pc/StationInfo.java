@@ -31,14 +31,17 @@ public abstract class StationInfo implements Context{
 	private int delay = 0;
 	private final static int DELAY_COUNT = 8;
 
-	protected State state = new InProgressState(this);
+	protected State state;
 	
 	public StationInfo(MonitorModel mm, int dis) {
 		this.mm = mm;
 		distance = dis;
 		ultraSonic = new UltraSonic(dis);
+		resetState();
 	}
 
+	
+	
 	/**
 	 * 判断距离变化的类
 	 * 
@@ -68,9 +71,15 @@ public abstract class StationInfo implements Context{
 	 * 推动状态机向前走的方法
 	 */
 	public void push() throws IOException {
+		System.err.print("["+stationIndex+"]");
+		System.err.println(state.toString());
 		state.handle();
 	}
 	
+	public void resetState(){
+		state = new InProgressState(this);
+		//trainList[0].setDestination(2);
+	}
 	
 	@Override
 	public void setState(State newState) throws IOException{
@@ -100,7 +109,7 @@ public abstract class StationInfo implements Context{
 	
 	@Override
 	public void updateWhich() {
-		System.err.println("in updateWhich");
+		//System.err.println("in updateWhich");
 		for(int i = 0; i < trainList.length; i++){
 			if(trainList[i].getDestination() == stationIndex){
 				//先记下是哪一辆火车要到达站台
@@ -108,7 +117,7 @@ public abstract class StationInfo implements Context{
 				break;
 			}
 		}
-		System.err.println("which is "+ which);
+		//System.err.println("which is "+ which);
 	}
 
 	@Override
@@ -120,7 +129,9 @@ public abstract class StationInfo implements Context{
 	@Override
 	public void commandBackward(int dest)  throws IOException {
 		//System.err.println("in commandBackward + "+ dest);
+		//TODO for test
 		mm.commandBackward(which, dest);
+		
 	}
 	
 	@Override
@@ -149,12 +160,6 @@ class SwitchStationInfo extends StationInfo {
 	public SwitchStationInfo(MonitorModel mm, int dis) {
 		super(mm, dis);
 		stationIndex = 1;
-	}
-
-	@Override
-	public void push() throws IOException {
-		System.out.println(state.toString());
-		state.handle();
 	}
 	
 	@Override
