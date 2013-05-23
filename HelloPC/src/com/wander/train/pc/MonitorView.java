@@ -81,10 +81,6 @@ public class MonitorView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*
-				SwingWorker worker = new DistanceWorker();
-				worker.execute();
-				*/
 				try {
 					control.push();
 				} catch (IOException e1) {
@@ -220,7 +216,7 @@ public class MonitorView extends JFrame {
 				}
 			}
 		});
-*/
+
 		btSpeedUp.addActionListener(new ActionListener() {
 
 			@Override
@@ -250,6 +246,7 @@ public class MonitorView extends JFrame {
 				}
 			}
 		});
+		*/
 	}
 
 	class GraphicPanel extends JPanel {
@@ -276,42 +273,6 @@ public class MonitorView extends JFrame {
 				} else {
 					g.drawImage(trainImage, 50, 32, null);
 				}
-			}
-		}
-	}
-	/**
-	 * 后台任务类，用于和NXT交互，得到距离信息
-	 * @author wander
-	 *
-	 */
-	class DistanceWorker extends SwingWorker<List, Void> {
-
-		@Override
-		protected List doInBackground() throws Exception {
-			//从NXT处获取距离数据
-			try{
-				control.update();
-			}
-			catch(IOException e){
-				e.printStackTrace();
-				throw new Exception();
-			}
-			return null;
-		}
-
-		@Override
-		protected void done() {
-			try {
-				// 这里可能需要通过timeout机制来保证响应
-				List<Integer> distanceList = get();
-			} catch (InterruptedException e) {
-				JOptionPane.showMessageDialog(null, "InterruptedException update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				JOptionPane.showMessageDialog(null, "ExecutionException update error.", "ERROR",JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			} finally {
-				updateGUI();
 			}
 		}
 	}

@@ -1,21 +1,27 @@
 package com.wander.train.pc;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-
+/**
+ * 更新"距离"的线程
+ * @author wander
+ *
+ */
 public class UpdateDistanceThread extends Thread {
-	private MonitorModel mm;
-	private int index;
-	public UpdateDistanceThread(MonitorModel mm, int i){
-		this.mm = mm;
-		index = i;
+	
+	private DataInputStream in;
+	private StationInfo station;
+	public UpdateDistanceThread(DataInputStream in, StationInfo station){
+		this.in = in;
+		this.station = station;
 	}
 	@Override
 	public void run() {
 		while(true){
 			try {
-				int dis = mm.receiver[index].readInt();
+				int dis = in.readInt();
 				System.err.println(dis);
-				mm.setDistance(index, dis);
+				station.setDistance(dis);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

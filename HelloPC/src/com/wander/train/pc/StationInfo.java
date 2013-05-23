@@ -7,13 +7,24 @@ import com.wander.train.pc.state.InProgressState;
 import com.wander.train.pc.state.State;
 
 public class StationInfo implements Context{
-
+	/**
+	 * 距离的类型
+	 * 0 TouchSensor
+	 * 1 UltrasonicSensor
+	 */
+	private static int DISTANCE_TYPE = 0;
+	
 	private MonitorModel mm;
-
-	public UltraSonic ultraSonic;
+	/**
+	 * 前一次距离
+	 */
+	private int preDistance;
+	/**
+	 * 最新的距离
+	 */
 	private int distance;
 
-	public TrainInfo[] trainList;
+	private TrainInfo[] trainList;
 	/**
 	 * 用于记录是哪一辆火车进站
 	 */
@@ -27,16 +38,25 @@ public class StationInfo implements Context{
 	 * 自动增长的编号
 	 */
 	private static int autoIndex = 1;
+	/**
+	 * UltrasonicSensor的临界值
+	 */
+	private final static int ULTRASONIC_THRESH = 15;
+	/**
+	 * TouchSensor的取值
+	 */
+	private final static int TOUCH_PRESS = 1;
+	private final static int TOUCH_RELEASE = 0;
 	
 	/**
 	 * 延迟
 	 */
 	private int delay = 0;
-	private final static int DELAY_COUNT = 5;
+	private static int DELAY_COUNT = 5;
 	/**
 	 * 保持状态机的变量
 	 */
-	protected State state;
+	private State state;
 	/**
 	 * 表明是否为交换站点的标记
 	 * true:	TrainEnter-TrainStop-RailSwtich-TrainStart-TrainLeave-RailSwitch
@@ -44,11 +64,18 @@ public class StationInfo implements Context{
 	 */
 	private boolean isSwitch = false;
 	
-	public StationInfo(MonitorModel mm, int dis, boolean isSwitch) {
+	public StationInfo(MonitorModel mm, TrainInfo[] trainList, boolean isSwitch) {
 		this.mm = mm;
-		distance = dis;
+		this.trainList = trainList;
+		if(DISTANCE_TYPE == 0){
+			preDistance = 0;
+			distance = 0;
+		}
+		else{
+			preDistance = 255;
+			distance = 255;
+		}
 		this.isSwitch = isSwitch;
-		ultraSonic = new UltraSonic(dis);
 		resetState();
 		//站台编号
 		stationIndex = autoIndex;
@@ -69,63 +96,20 @@ public class StationInfo implements Context{
 	}
 	
 	/**
-	 * 判断距离变化的类
-	 * 
-	 * @author wander
-	 * 
-	 */
-	class UltraSonic {
-		private int distance;
-		private final static int THRESH = 15;
-		private final static int PRESS = 1;
-		private final static int RELEASE = 0;
-		public UltraSonic(int distance) {
-			this.distance = distance;
-		}
-
-		public int update(int dis) {
-			if(dis == PRESS){
-				return 1;
-			}
-			else if(dis == RELEASE){
-				return 2;
-			}
-			return 0;
-			/*
-			if(distance == RELEASE && (distance = dis) == PRESS){
-				return 1;
-			}
-			else if(distance == PRESS && (distance = dis) == RELEASE){
-				
-			}
-			return 0;
-			*/
-			/*
-			// train enter
-			if (distance > THRESH && (distance = dis) <= THRESH)// TODO 15这个值需要修改
-				return 1;
-			// train leave
-			if (distance <= THRESH && (distance = dis) > THRESH)
-				return 2;
-			return 0;
-			*/
-		}
-	}
-	
-
-	/**
 	 * 推动状态机向前走的方法
 	 */
 	public void push() throws IOException {
+		//TODO for debug
 		System.err.print("["+stationIndex+"]");
 		System.err.println(state.toString());
 		
 		state.handle();
 	}
-	
+	/**
+	 * 重新设定状态
+	 */
 	public void resetState(){
 		state = new InProgressState(this);
-		//trainList[0].setDestination(2);
 	}
 	
 	@Override
@@ -151,7 +135,24 @@ public class StationInfo implements Context{
 	
 	@Override
 	public int updateDistance() {
-		return ultraSonic.update(distance);
+		if(DISTANCE_TYPE == 0){	
+			if(distance == TOUCH_PRESS){
+				return 1;
+			}
+			else if(distance == TOUCH_RELEASE){
+				return 2;
+			}
+			return 0;
+		}
+		else{
+			// train enter
+			if (preDistance > ULTRASONIC_THRESH && (preDistance = distance) <= ULTRASONIC_THRESH)// TODO 15这个值需要修改
+				return 1;
+			// train leave
+			if (preDistance <= ULTRASONIC_THRESH && (preDistance = distance) > ULTRASONIC_THRESH)
+				return 2;
+			return 0;
+		}
 	}
 	
 	@Override

@@ -10,30 +10,11 @@ import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 import lejos.pc.comm.NXTInfo;
 
-public class MonitorModel {
-	
-	//配置参数 
-	/**
-	 * 站点数量
-	 */
-	private static int STATION_NUM = 2;
-	/**
-	 * 火车数量
-	 */
-	private static int TRAIN_NUM = 1;
-	/**
-	 * SWITCH站点的编号
-	 */
-	private static int SWITCH_INDEX  = 0;
-	/**
-	 * 连接方式
-	 * 0 USB, 1 BLUETOOTH
-	 */
-	private static int CONN_TYPE = 1;
+public class MonitorModel implements Config{
 	/**
 	 * NXT的Mac地址
 	 */
-	private NXTInfo[] nxts = new NXTInfo[3];
+	private static NXTInfo[] nxts = new NXTInfo[3];
 	{
 		nxts[0] = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT1",
 			"00:16:53:10:40:a7");
@@ -45,7 +26,7 @@ public class MonitorModel {
 	/**
 	 * NXT的名称
 	 */
-	private String[] nxtStr = new String[3];
+	private static String[] nxtStr = new String[3];
 	{
 		nxtStr[0] = "usb://NXT";
 		nxtStr[1] = "usb://NXT_OF";
@@ -53,12 +34,11 @@ public class MonitorModel {
 	}
 	
 	//实例成员
-	
 	public StationInfo[] stationList= new StationInfo[STATION_NUM];
 	// private NXTConnector[] pcNxtList;
 	private NXTComm[] pcNxtList = new NXTComm[STATION_NUM];
-	public DataOutputStream[] sender = new DataOutputStream[STATION_NUM];
-	public DataInputStream[] receiver = new DataInputStream[STATION_NUM];
+	private DataOutputStream[] sender = new DataOutputStream[STATION_NUM];
+	private DataInputStream[] receiver = new DataInputStream[STATION_NUM];
 	
 
 	/*
@@ -122,26 +102,16 @@ public class MonitorModel {
 		// initialize station
 		for(int i=0; i < stationList.length; i++){
 			if(i == SWITCH_INDEX){
-				stationList[i] = new StationInfo(this, 255, true);
+				stationList[i] = new StationInfo(this, trainList, true);
 			}
 			else{
-				stationList[i] = new StationInfo(this, 255, false);
+				stationList[i] = new StationInfo(this, trainList, false);
 			}
-			stationList[i].trainList = trainList;
 			//TODO 以后再管这个
-			new UpdateDistanceThread(this, i).start();
+			new UpdateDistanceThread(receiver[i], stationList[i]).start();
 		}
 	}
 	
-	
-	/**
-	 * TODO 以后需要改一下,锁的粒度有点大
-	 * @param i
-	 * @param dis
-	 */
-	public void setDistance(int i, int dis){
-		stationList[i].setDistance(dis);
-	}
 	/**
 	 * 推动状态机
 	 * @throws IOException 
@@ -151,52 +121,11 @@ public class MonitorModel {
 			stationList[i].push();
 		}
 	}
-	/**
-	 * 在DistanceWorker.doInBackground中调用
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public boolean update() throws IOException {
-		updateDistance();
-		
-		for (int i = 0; i < stationList.length; i++) {
-			stationList[i].push();
-		}
-		return true;
-	}
-	/**
-	 * 从NXT处获取"距离"信息
-	 * @throws IOException
-	 */
-	private void updateDistance() throws IOException {
-		for (int i = 0; i < stationList.length; i++) {
-			try {
-				//sender[i].writeInt(Command.UPDATE_DISTANCE);
-				//sender[i].flush();
-				int dis = -1;
-				//dis = receiver[i].readInt();
-				System.err.println("available "+ receiver[0].available() );
-				/*
-				while(receiver[i].available() > 0){
-					dis = receiver[i].readInt();					
-				}
-				*/
-				stationList[i].setDistance(dis);
-				//TODO test
-				System.err.println(i+"]"+stationList[i].getDistance());
-			} catch (IOException e) {
-				// TODO do nothing
-				//stationList[i].distance = -1;
-				System.err.println(i+" update distance");
-			}
-		}
-	}
-	
+	//具体的命令
 	public void commandStart() {
 		//TODO 以后修改
-		stationList[0].resetState();
 		for(int i =0; i< stationList.length; i++){
+			stationList[i].resetState();
 			try {
 				sender[i].writeInt(Command.PROGRAM_START);
 				sender[i].flush();

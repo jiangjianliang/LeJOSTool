@@ -35,7 +35,7 @@ class ChangeSpeedCommand implements Command {
 
 	@Override
 	public boolean execute() {
-		LCD.drawString(channel + "] speed ", 0, 7);
+		//LCD.drawString(channel + "] speed ", 0, 7);
 		LCD.drawInt(cmd, 2, 9, 7);
 		link.sendPFSingleModePWM(channel, TRAIN_PORT, cmd);
 		return true;

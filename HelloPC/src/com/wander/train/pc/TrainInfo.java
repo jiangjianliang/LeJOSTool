@@ -2,7 +2,6 @@ package com.wander.train.pc;
 
 public class TrainInfo {
 	
-	
 	private int speed;
 	private int state;	//0 : stop;		1 : forward;	-1 : backward;
 	private int position;	//0 : sA -> sB;	1 : sB;	2 : sB -> sA;	3 : sA
