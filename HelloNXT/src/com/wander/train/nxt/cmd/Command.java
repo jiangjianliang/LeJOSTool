@@ -1,14 +1,6 @@
 package com.wander.train.nxt.cmd;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import com.wander.train.nxt.IrLinkExt;
-
-import lejos.nxt.LCD;
-import lejos.nxt.Motor;
-import lejos.nxt.TouchSensor;
-import lejos.nxt.UltrasonicSensor;
 
 /**
  * 命令接口

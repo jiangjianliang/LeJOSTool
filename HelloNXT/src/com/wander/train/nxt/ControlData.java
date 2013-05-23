@@ -2,14 +2,9 @@ package com.wander.train.nxt;
 
 public class ControlData {
 	/**
-	 * 是否持续进行更新"距离"
+	 * 程序是否继续
 	 */
 	private boolean keepOn = true;
-	/**
-	 * 程序是否退出
-	 * Executor -> main
-	 */
-	private boolean exit = false;
 	/**
 	 * 程序是否开始
 	 * Executor -> ReportDistance
@@ -22,14 +17,6 @@ public class ControlData {
 
 	public synchronized boolean isKeepOn() {
 		return keepOn;
-	}
-
-	public synchronized boolean isExit() {
-		return exit;
-	}
-
-	public synchronized void setExit(boolean exit) {
-		this.exit = exit;
 	}
 
 	public synchronized boolean isStart() {

@@ -1,7 +1,7 @@
 package com.wander.train.nxt.cmd;
 
-import lejos.nxt.LCD;
 import lejos.nxt.Motor;
+import lejos.nxt.NXTRegulatedMotor;
 
 
 /**
@@ -12,7 +12,7 @@ import lejos.nxt.Motor;
  */
 class SwitchCommand implements Command {
 	private static SwitchCommand instance = new SwitchCommand();
-
+	private NXTRegulatedMotor motor = Motor.A;
 	private boolean switchToMain = false;
 
 	private static int DEGREE = 35;
@@ -28,14 +28,14 @@ class SwitchCommand implements Command {
 	@Override
 	public boolean execute() {
 		if (switchToMain) {
-			LCD.drawString("switch main  ", 0, 7);
-			Motor.A.setSpeed(DEGREE * 3);
-			Motor.A.rotate(-DEGREE - 15);
-			Motor.A.rotate(5);
+			//LCD.drawString("switch main  ", 0, 7);
+			motor.setSpeed(DEGREE * 3);
+			motor.rotate(-DEGREE - 15);
+			motor.rotate(5);
 		} else {
-			LCD.drawString("switch branch", 0, 7);
-			Motor.A.setSpeed(DEGREE * 3);
-			Motor.A.rotate(DEGREE + 10);
+			//LCD.drawString("switch branch", 0, 7);
+			motor.setSpeed(DEGREE * 3);
+			motor.rotate(DEGREE + 10);
 		}
 		return true;
 	}

@@ -15,7 +15,7 @@ import com.wander.train.nxt.CommandExecutor;
 import com.wander.train.nxt.CommandReceiver;
 import com.wander.train.nxt.ControlData;
 import com.wander.train.nxt.IrLinkExt;
-import com.wander.train.nxt.ReportDistance;
+import com.wander.train.nxt.TouchDistance;
 import com.wander.train.nxt.cmd.CommandFactory;
 
 public class TestDataOutput {
@@ -39,13 +39,12 @@ public class TestDataOutput {
 		TouchSensor touch = new TouchSensor(SensorPort.S3);
 		
 		ControlData ca = new ControlData();
-		ReportDistance report = new ReportDistance(touch, pcDout, ca);
+		TouchDistance report = new TouchDistance(touch, pcDout, ca);
 		report.start();
 		ca.setStart(true);
-		while(!Button.ESCAPE.isDown()){
+		while(!Button.ESCAPE.isDown()&& ca.isKeepOn()){
 			
 		}
-		ca.setKeepOn(false);
 		
 		try {
 			pcDin.close();
@@ -54,7 +53,7 @@ public class TestDataOutput {
 		} catch (IOException e) {
 			LCD.drawString("CLOSE ERROR.", 0, 7);
 		}
-		//LCD.drawString("good "+ count, 5, 4);
+		LCD.clear();
 		LCD.drawString("good bye", 5, 4);
 		Button.waitForAnyPress();
 	}

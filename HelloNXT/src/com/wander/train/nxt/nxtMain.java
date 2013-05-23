@@ -4,56 +4,58 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.wander.train.nxt.cmd.Command;
 import com.wander.train.nxt.cmd.CommandFactory;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
+
 //import lejos.nxt.comm.USB;
 
-
-public class nxtMain {
+public class nxtMain implements Config {
 	public static void main(String[] args) {
 		LCD.drawString("waiting...", 0, 0);
-		
-		//NXTConnection connection = USB.waitForConnection();
-		
+
+		// NXTConnection connection = USB.waitForConnection();
+
 		NXTConnection connection = Bluetooth.waitForConnection();
 		DataInputStream pcDin = connection.openDataInputStream();
 		DataOutputStream pcDout = connection.openDataOutputStream();
-		
+
 		LCD.drawString("connected.", 0, 0);
 		LCD.drawString("distance:", 0, 1);
 		LCD.drawString("cmd:", 0, 2);
-		
-		IrLinkExt link = new IrLinkExt(SensorPort.S1);
-		TouchSensor touch = new TouchSensor(SensorPort.S3);
-		//UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
-		
+
+		IrLinkExt link = new IrLinkExt(IrLinkPort);
+		TouchSensor touch = new TouchSensor(TouchPort);
+		UltrasonicSensor sonic = new UltrasonicSensor(UltrasonicPort);
+
 		ControlData ca = new ControlData();
-		CommandFactory cmdFactory = CommandFactory.getInstance(link, null, pcDout, touch, ca);
-		
+		CommandFactory cmdFactory = CommandFactory.getInstance(link, ca);
+
 		CommandExecutor cmdExecutor = new CommandExecutor(ca);
 		cmdExecutor.start();
-		
-		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, ca, cmdFactory, cmdExecutor);
+
+		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, ca,
+				cmdFactory, cmdExecutor);
 		cmdReceiver.start();
-		
-		ReportDistance report = new ReportDistance(touch, pcDout, ca);
-		report.start();
-		//TODO test
-		//ca.setStart(true);
-		while(!(Button.ESCAPE.isDown() || ca.isExit()) ){
-			
+		if (DISTANCE_TYPE == 0) {
+			TouchDistance report = new TouchDistance(touch, pcDout, ca);
+			report.start();
+		} else {
+			UltrasonicDistance report = new UltrasonicDistance(sonic, pcDout, ca);
+			report.start();
 		}
-		ca.setKeepOn(false);
-		
+
+		while (!Button.ESCAPE.isDown() && ca.isKeepOn()) {
+
+		}
+		//ca.setKeepOn(false);
+
 		try {
 			pcDin.close();
 			pcDout.close();
@@ -64,22 +66,6 @@ public class nxtMain {
 		LCD.clear();
 		LCD.drawString("good bye", 5, 4);
 		Button.waitForAnyPress();
-		 
+
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

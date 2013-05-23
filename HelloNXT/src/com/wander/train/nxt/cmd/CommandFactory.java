@@ -1,13 +1,9 @@
 package com.wander.train.nxt.cmd;
 
-import java.io.DataOutputStream;
-
 import com.wander.train.nxt.ControlData;
 import com.wander.train.nxt.IrLinkExt;
 
 import lejos.nxt.LCD;
-import lejos.nxt.TouchSensor;
-import lejos.nxt.UltrasonicSensor;
 
 /**
  * 命令工厂类
@@ -20,9 +16,6 @@ public class CommandFactory {
 	private static CommandFactory instance = new CommandFactory();
 
 	private IrLinkExt link;
-	private UltrasonicSensor sonic;
-	private DataOutputStream out;
-	private TouchSensor touch;
 	private ControlData ca;
 
 	private CommandFactory() {
@@ -30,34 +23,14 @@ public class CommandFactory {
 	}
 
 	public static CommandFactory getInstance(IrLinkExt link,
-			UltrasonicSensor sonic, DataOutputStream out, TouchSensor touch,
 			ControlData ca) {
 		instance.setLink(link);
-		instance.setSonic(sonic);
-		instance.setOut(out);
-		instance.setTouch(touch);
 		instance.setCa(ca);
 		return instance;
 	}
-
-	public static void setInstance(CommandFactory instance) {
-		CommandFactory.instance = instance;
-	}
-
+	
 	public void setLink(IrLinkExt link) {
 		this.link = link;
-	}
-
-	public void setSonic(UltrasonicSensor sonic) {
-		this.sonic = sonic;
-	}
-
-	public void setOut(DataOutputStream out) {
-		this.out = out;
-	}
-
-	public void setTouch(TouchSensor touch) {
-		this.touch = touch;
 	}
 
 	public void setCa(ControlData ca) {

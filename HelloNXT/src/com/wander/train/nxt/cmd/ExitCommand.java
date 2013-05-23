@@ -23,6 +23,7 @@ class ExitCommand implements Command {
 
 	@Override
 	public boolean execute() {
+		ca.setKeepOn(false);
 		return false;
 	}
 

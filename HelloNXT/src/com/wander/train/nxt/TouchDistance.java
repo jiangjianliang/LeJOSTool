@@ -6,13 +6,13 @@ import java.io.IOException;
 import lejos.nxt.LCD;
 import lejos.nxt.TouchSensor;
 
-public class ReportDistance extends Thread {
+public class TouchDistance extends Thread {
 
 	private TouchSensor touch;
 	private DataOutputStream out;
 	private ControlData ca;
 
-	public ReportDistance(TouchSensor touch, DataOutputStream out,
+	public TouchDistance(TouchSensor touch, DataOutputStream out,
 			ControlData ca) {
 		this.touch = touch;
 		this.out = out;
