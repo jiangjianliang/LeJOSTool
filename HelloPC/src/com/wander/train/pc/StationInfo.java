@@ -11,7 +11,7 @@ public class StationInfo implements Context{
 	private MonitorModel mm;
 
 	public UltraSonic ultraSonic;
-	public int distance;
+	private int distance;
 
 	public TrainInfo[] trainList;
 	/**
@@ -22,11 +22,11 @@ public class StationInfo implements Context{
 	/**
 	 * 本站台的索引
 	 */
-	protected int stationIndex;
+	private int stationIndex;
 	/**
 	 * 自动增长的编号
 	 */
-	private static int sIndex = 0;
+	private static int autoIndex = 1;
 	
 	/**
 	 * 延迟
@@ -50,11 +50,22 @@ public class StationInfo implements Context{
 		this.isSwitch = isSwitch;
 		ultraSonic = new UltraSonic(dis);
 		resetState();
+		//站台编号
+		stationIndex = autoIndex;
+		autoIndex++;
 	}
 
 	@Override
 	public boolean isSwitch() {
 		return isSwitch;
+	}
+	
+	public synchronized void setDistance(int dis){
+		this.distance = dis;
+	}
+	
+	public synchronized int getDistance(){
+		return distance;
 	}
 	
 	/**
@@ -108,6 +119,7 @@ public class StationInfo implements Context{
 	public void push() throws IOException {
 		System.err.print("["+stationIndex+"]");
 		System.err.println(state.toString());
+		
 		state.handle();
 	}
 	
@@ -152,7 +164,7 @@ public class StationInfo implements Context{
 				break;
 			}
 		}
-		//System.err.println("which is "+ which);
+		System.err.println("which is "+ which);
 	}
 
 	@Override

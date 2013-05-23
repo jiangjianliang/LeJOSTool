@@ -7,7 +7,12 @@ import com.wander.train.nxt.cmd.Command;
 
 public class CommandExecutor extends Thread {
 	
+	private ControlData ca;
 	private List<Command> cmdList = new ArrayList<Command>();
+	
+	public CommandExecutor(ControlData ca){
+		this.ca = ca;
+	}
 	
 	
 	public synchronized void addCommand(Command cmd){
@@ -20,7 +25,7 @@ public class CommandExecutor extends Thread {
 	
 	@Override
 	public void run() {
-		while(true){
+		while(ca.isKeepOn()){
 			if(!cmdList.isEmpty()){
 				Command cmd = removeCommand();
 				cmd.execute();

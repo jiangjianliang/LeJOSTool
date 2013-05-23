@@ -24,12 +24,15 @@ public interface Command {
 	final static int TRAIN_STOP_A = 1;
 	final static int TRAIN_STOP_B = -1;
 
-	final static int UPDATE_ARRIVAL = 0;
+	final static int PROGRAM_START = 0;
 	// 换轨道
 	final static int SWITCH_MAIN = 2;
 	final static int SWITCH_BRANCH = -2;
 
 	// 要求发送距离
+	/**
+	 * @deprecated
+	 */
 	final static int UPDATE_DISTANCE = 100;
 
 	// 速度标记

@@ -36,8 +36,7 @@ public class MonitorView extends JFrame {
 	private MonitorModel control;
 
 	private Timer timer;
-
-	private int count = 0;
+	private int UPDATE_PERIOD = 200;
 	
 	public static void main(String[] args) {
 		MonitorView pcGUI = new MonitorView();
@@ -78,14 +77,21 @@ public class MonitorView extends JFrame {
 		addListener();
 		control = new MonitorModel();
 
-		timer = new Timer(300, new ActionListener() {
+		timer = new Timer(UPDATE_PERIOD, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				/*
 				SwingWorker worker = new DistanceWorker();
 				worker.execute();
-				
+				*/
+				try {
+					control.push();
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(null, "state error.", "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				updateGUI();
 			}
 		});
 
@@ -102,6 +108,7 @@ public class MonitorView extends JFrame {
 				JOptionPane.showMessageDialog(null, "exit error.", "ERROR",
 						JOptionPane.ERROR_MESSAGE);
 			}
+			control.clean();
 		}
 		super.processWindowEvent(e);
 	}
@@ -159,9 +166,7 @@ public class MonitorView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				timer.start();
 				try {
-					//TODO 测试这条语句执行次数
-					count++;
-					control.stationList[0].resetState();
+					control.commandStart();
 					control.commandBackward(0, 1);
 					infoArea.setText("start");
 				} catch (IOException e1) {
@@ -286,7 +291,6 @@ public class MonitorView extends JFrame {
 			//从NXT处获取距离数据
 			try{
 				control.update();
-				System.err.println("count "+count);
 			}
 			catch(IOException e){
 				e.printStackTrace();

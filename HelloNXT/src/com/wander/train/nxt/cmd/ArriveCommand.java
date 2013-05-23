@@ -9,6 +9,7 @@ import lejos.nxt.TouchSensor;
 
 /**
  * 到站命令
+ * @deprecated
  */
 class ArriveCommand implements Command {
 	private static ArriveCommand instance = null;

@@ -36,38 +36,32 @@ public class nxtMain {
 		TouchSensor touch = new TouchSensor(SensorPort.S3);
 		//UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S4);
 		
-		CommandFactory cmdFactory = CommandFactory.getInstance();
-		CommandExecutor cmdExecutor = new CommandExecutor();
+		ControlData ca = new ControlData();
+		CommandFactory cmdFactory = CommandFactory.getInstance(link, null, pcDout, touch, ca);
+		
+		CommandExecutor cmdExecutor = new CommandExecutor(ca);
 		cmdExecutor.start();
-		//int count = 0;
-		while (true) {
-			try {
-				
-				int cmd =  pcDin.readInt();
-				LCD.drawInt(cmd, 6, 5, 2);
-				
-				Command concreteCommand = cmdFactory.parseCommand(cmd, link, null, pcDout, touch);
-				/*
-				if(concreteCommand instanceof ChangeSpeedCommand){
-					count++;
-				}
-				*/
-				cmdExecutor.addCommand(concreteCommand);
-				/*
-				boolean result = concreteCommand.execute();
-				if( !result){
-					break;
-				}
-				*/
-				//Thread.sleep(100);
-			}
-			 catch (Exception e) {
-				LCD.drawString("ERROR READ!", 0, 7);
-				break;
-			}
+		
+		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, ca, cmdFactory, cmdExecutor);
+		cmdReceiver.start();
+		
+		ReportDistance report = new ReportDistance(touch, pcDout, ca);
+		report.start();
+		//TODO test
+		//ca.setStart(true);
+		while(!(Button.ESCAPE.isDown() || ca.isExit()) ){
 			
 		}
-		//LCD.drawString("good "+ count, 5, 4);
+		ca.setKeepOn(false);
+		
+		try {
+			pcDin.close();
+			pcDout.close();
+			connection.close();
+		} catch (IOException e) {
+			LCD.drawString("CLOSE ERROR.", 0, 7);
+		}
+		LCD.clear();
 		LCD.drawString("good bye", 5, 4);
 		Button.waitForAnyPress();
 		 
