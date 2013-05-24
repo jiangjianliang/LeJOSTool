@@ -30,8 +30,8 @@ class SwitchCommand implements Command {
 		if (switchToMain) {
 			//LCD.drawString("switch main  ", 0, 7);
 			motor.setSpeed(DEGREE * 3);
-			motor.rotate(-DEGREE - 15);
-			motor.rotate(5);
+			motor.rotate(-DEGREE - 20);
+			motor.rotate(10);
 		} else {
 			//LCD.drawString("switch branch", 0, 7);
 			motor.setSpeed(DEGREE * 3);

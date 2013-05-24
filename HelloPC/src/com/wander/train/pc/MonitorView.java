@@ -8,22 +8,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
-
-import com.wander.train.pc.state.TrainLeaveState;
 
 public class MonitorView extends JFrame {
 
@@ -163,7 +155,8 @@ public class MonitorView extends JFrame {
 				timer.start();
 				try {
 					control.commandStart();
-					control.commandBackward(0, 1);
+					//control.commandBackward(0, 1);
+					control.commandForward(0, 2);
 					infoArea.setText("start");
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(null, "start error.", "ERROR",

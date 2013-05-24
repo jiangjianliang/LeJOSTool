@@ -43,6 +43,11 @@ public class nxtMain implements Config {
 		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, ca,
 				cmdFactory, cmdExecutor);
 		cmdReceiver.start();
+		
+		TouchDistance report = new TouchDistance(touch, pcDout, ca);
+		report.start();
+
+		/*
 		if (DISTANCE_TYPE == 0) {
 			TouchDistance report = new TouchDistance(touch, pcDout, ca);
 			report.start();
@@ -50,7 +55,7 @@ public class nxtMain implements Config {
 			UltrasonicDistance report = new UltrasonicDistance(sonic, pcDout, ca);
 			report.start();
 		}
-
+		 */
 		while (!Button.ESCAPE.isDown() && ca.isKeepOn()) {
 
 		}

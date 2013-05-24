@@ -28,11 +28,12 @@ public class nxtSub implements Config{
 		LCD.drawString("distance:", 0, 1);
 		LCD.drawString("cmd:", 0, 2);
 		
+		IrLinkExt link = new IrLinkExt(IrLinkPort);
 		TouchSensor touch = new TouchSensor(TouchPort);
 		UltrasonicSensor sonic = new UltrasonicSensor(UltrasonicPort);
 		
 		ControlData ca = new ControlData();
-		CommandFactory cmdFactory = CommandFactory.getInstance(null, ca);
+		CommandFactory cmdFactory = CommandFactory.getInstance(link, ca);
 		
 		CommandExecutor cmdExecutor = new CommandExecutor(ca);
 		cmdExecutor.start();
@@ -40,6 +41,9 @@ public class nxtSub implements Config{
 		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, ca, cmdFactory, cmdExecutor);
 		cmdReceiver.start();
 		
+		TouchDistance report = new TouchDistance(touch, pcDout, ca);
+		report.start();
+		/*
 		if (DISTANCE_TYPE == 0) {
 			TouchDistance report = new TouchDistance(touch, pcDout, ca);
 			report.start();
@@ -47,7 +51,7 @@ public class nxtSub implements Config{
 			UltrasonicDistance report = new UltrasonicDistance(sonic, pcDout, ca);
 			report.start();
 		}
-		
+		*/
 		while(!Button.ESCAPE.isDown() && ca.isKeepOn()){
 			
 		}

@@ -20,7 +20,7 @@ public class UpdateDistanceThread extends Thread {
 		while(true){
 			try {
 				int dis = in.readInt();
-				System.err.println(dis);
+				//System.err.println(dis);
 				station.setDistance(dis);
 			} catch (IOException e1) {
 				e1.printStackTrace();

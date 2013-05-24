@@ -52,7 +52,7 @@ public class StationInfo implements Context{
 	 * 延迟
 	 */
 	private int delay = 0;
-	private static int DELAY_COUNT = 5;
+	private static int DELAY_COUNT = 15;
 	/**
 	 * 保持状态机的变量
 	 */
@@ -99,10 +99,6 @@ public class StationInfo implements Context{
 	 * 推动状态机向前走的方法
 	 */
 	public void push() throws IOException {
-		//TODO for debug
-		System.err.print("["+stationIndex+"]");
-		System.err.println(state.toString());
-		
 		state.handle();
 	}
 	/**
@@ -114,6 +110,7 @@ public class StationInfo implements Context{
 	
 	@Override
 	public void setState(State newState) throws IOException{
+		System.err.println(stationIndex+"]"+state.toString()+"-->"+newState.toString());
 		state = newState;
 		state.doExtra();
 	}

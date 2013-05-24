@@ -139,39 +139,48 @@ public class MonitorModel implements Config{
 		trainList[i].setStop();
 		// trainList[i].setDestination(trainList[i].getPosition());
 		if (i == 0) {
-			System.err.println("sending stop for [" + Command.TRAIN_STOP_A);
-			sender[0].writeInt(Command.TRAIN_STOP_A);
+			System.err.println("sending stop for [i=" + i + "], cmd="+Command.TRAIN_STOP_A);
+			for(int j=0; j < stationList.length; j++){
+				sender[j].writeInt(Command.TRAIN_STOP_A);				
+			}
 		} else {
-			System.err.println("sending stop for [" + Command.TRAIN_STOP_B);
-			sender[0].writeInt(Command.TRAIN_STOP_B);
+			System.err.println("sending stop for [i=" +  i + "], cmd="+Command.TRAIN_STOP_B);
+			for(int j=0; j < stationList.length; j++){				
+				sender[j].writeInt(Command.TRAIN_STOP_B);
+			}
 		}
-		sender[0].flush();
+		for(int j =0; j< stationList.length; j++){
+			sender[j].flush();			
+		}
 	}
 
 	public void commandForward(int i, int dest) throws IOException {
-		System.err.println("forward [" + i + "]," + dest);
 		trainList[i].setDestination(dest);
 		trainList[i].setForward();
 		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
 		if (i == 0) {
 			cmd += Command.TRAIN_MARK_A;
 		}
-		System.err.println(cmd);
-		sender[0].writeInt(cmd);
-		sender[0].flush();
+		System.err.println("forward [i=" + i + "], dest=" + dest+", cmd="+cmd);
+		for(int j =0; j< stationList.length; j++){
+			sender[j].writeInt(cmd);
+			sender[j].flush();			
+		}
+		//sender[0].flush();
 	}
 
 	public void commandBackward(int i, int dest) throws IOException {
-		System.err.println("backward [" + i + "]," + dest);
 		trainList[i].setDestination(dest);
 		trainList[i].setBackward();
 		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
 		if (i == 0) {
 			cmd += Command.TRAIN_MARK_A;
 		}
-		System.err.println(-cmd);
-		sender[0].writeInt(-cmd);
-		sender[0].flush();
+		System.err.println("backward [i=" + i + "], dest=" + dest+", cmd="+(-cmd));
+		for(int j =0; j< stationList.length; j++){
+			sender[j].writeInt(-cmd);
+			sender[j].flush();
+		}
 	}
 
 	public void commandSpeedUp(int i) throws IOException {
@@ -184,8 +193,10 @@ public class MonitorModel implements Config{
 				cmd += Command.TRAIN_MARK_A;
 			}
 			cmd = (trainList[i].isForward() ? cmd : cmd * -1);
-			sender[0].writeInt(cmd);
-			sender[0].flush();
+			for(int j=0; j < stationList.length; j++){
+				sender[j].writeInt(cmd);
+				sender[j].flush();				
+			}
 		}
 	}
 
@@ -199,8 +210,10 @@ public class MonitorModel implements Config{
 				cmd += Command.TRAIN_MARK_A;
 			}
 			cmd = (trainList[i].isForward() ? cmd : cmd * -1);
-			sender[0].writeInt(cmd);
-			sender[0].flush();
+			for(int j = 0; j< stationList.length; j++){
+				sender[j].writeInt(cmd);
+				sender[j].flush();				
+			}
 		}
 	}
 
