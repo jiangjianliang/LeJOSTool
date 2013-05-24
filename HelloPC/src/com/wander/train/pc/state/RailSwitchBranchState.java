@@ -10,16 +10,16 @@ public class RailSwitchBranchState extends State{
 
 	@Override
 	public void handle() throws IOException {
-		context.incDelay();
+		//context.incDelay();
 		
-		if (context.isExpired()) {
+		//if (context.isExpired()) {
 			context.setState(new TrainStartState(context));
-		}
+		//}
 	}
 
 	@Override
 	public void doExtra() throws IOException {
-		context.resetDelay();
+		//context.resetDelay();
 		// 发出换轨道命令
 		context.commandSwitchMain(false);
 	}

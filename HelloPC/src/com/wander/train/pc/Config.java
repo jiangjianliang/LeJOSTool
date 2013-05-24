@@ -12,7 +12,7 @@ public interface Config {
 		/**
 		 * 火车数量
 		 */
-		public static int TRAIN_NUM = 1;
+		public static int TRAIN_NUM = 2;
 		/**
 		 * SWITCH站点的编号
 		 */

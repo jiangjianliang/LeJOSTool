@@ -55,6 +55,8 @@ public class nxtSub implements Config{
 		while(!Button.ESCAPE.isDown() && ca.isKeepOn()){
 			
 		}
+		//还是需要这个来控制程序的退出
+		ca.setKeepOn(false);
 		
 		try {
 			pcDin.close();

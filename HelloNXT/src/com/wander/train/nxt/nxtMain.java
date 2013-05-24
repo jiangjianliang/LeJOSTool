@@ -59,7 +59,7 @@ public class nxtMain implements Config {
 		while (!Button.ESCAPE.isDown() && ca.isKeepOn()) {
 
 		}
-		//ca.setKeepOn(false);
+		ca.setKeepOn(false);
 
 		try {
 			pcDin.close();

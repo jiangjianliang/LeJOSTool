@@ -154,8 +154,8 @@ public class StationInfo implements Context{
 	
 	@Override
 	public void updateWhich() {
-		//System.err.println("in updateWhich");
-		for(int i = 0; i < trainList.length; i++){
+		System.err.println("in updateWhich");
+		for(int i = trainList.length -1; i >= 0; i--){
 			if(trainList[i].getDestination() == stationIndex){
 				//先记下是哪一辆火车要到达站台
 				which = i;
