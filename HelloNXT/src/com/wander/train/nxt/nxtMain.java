@@ -68,7 +68,7 @@ public class nxtMain implements Config {
 		} catch (IOException e) {
 			LCD.drawString("CLOSE ERROR.", 0, 7);
 		}
-		LCD.clear();
+		//LCD.clear();
 		LCD.drawString("good bye", 5, 4);
 		Button.waitForAnyPress();
 

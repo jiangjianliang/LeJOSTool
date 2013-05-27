@@ -8,10 +8,17 @@ public class TrainInfo {
 	private int destination;		//0 : none;		1 : sB;		2 : sA;
 	
 	public TrainInfo(){
-		speed = 5;
+		speed = 4;
 		state = 0;
 		position = 0;
 		destination = 0;
+	}
+	
+	public TrainInfo(int speed, int state, int position, int destination){
+		this.speed = speed;
+		this.state = state;
+		this.position = position;
+		this.destination = destination;
 	}
 	
 	public boolean isForward(){

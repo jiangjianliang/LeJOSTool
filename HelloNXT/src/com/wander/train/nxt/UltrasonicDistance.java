@@ -41,5 +41,6 @@ public class UltrasonicDistance extends Thread {
 				// e.printStackTrace();
 			}
 		}
+		LCD.drawString("exit UltrasonicDistance", 0, 0);
 	}
 }

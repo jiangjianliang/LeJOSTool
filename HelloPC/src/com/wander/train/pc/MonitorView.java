@@ -28,6 +28,9 @@ public class MonitorView extends JFrame {
 	private MonitorModel control;
 
 	private Timer timer;
+	/**
+	 * 更新周期
+	 */
 	private int UPDATE_PERIOD = 200;
 	
 	public static void main(String[] args) {
@@ -82,7 +85,6 @@ public class MonitorView extends JFrame {
 				updateGUI();
 			}
 		});
-
 		//timer.start();
 		updateGUI();
 	}
@@ -245,29 +247,49 @@ public class MonitorView extends JFrame {
 
 	class GraphicPanel extends JPanel {
 		private static final long serialVersionUID = 1269940980827250133L;
-
-		private final ImageIcon imageIcon_1 = new ImageIcon("image/backmap.jpg");
-		private final ImageIcon imageIcon_2 = new ImageIcon("image/train.jpg");
-		private final Image backImage = imageIcon_1.getImage();
-		private final Image trainImage = imageIcon_2.getImage();
-
+		
+		private String back = "image/backmap.jpg";
+		private String aForward = "image/AForward.jpg";
+		private String aBackward = "image/ABackward.jpg";
+		private String bForward = "image/BForward.jpg";
+		private String bBackward = "image/BBackward.jpg";
+		private final Image backImage = new ImageIcon(back).getImage();
+		private final Image trainAForward = new ImageIcon(aForward).getImage();
+		private final Image trainABackward = new ImageIcon(aBackward).getImage();
+		private final Image trainBForward = new ImageIcon(bForward).getImage();
+		private final Image trainBBackward = new ImageIcon(bBackward).getImage();
+		
+		private int forwardY = 32;
+		private int backwardY = 90;
+		//TODO untested
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			if (backImage != null)
 				g.drawImage(backImage, 0, 0, null);
-			if (trainImage != null) {
-				int pos = control.getTrainPos(0);
-				if (pos == 0) {
-					g.drawImage(trainImage, 150, 32, null);
-				} else if (pos == 1) {
-					g.drawImage(trainImage, 260, 32, null);
-				} else if (pos == 2) {
-					g.drawImage(trainImage, 152, 90, null);
-				} else {
-					g.drawImage(trainImage, 50, 32, null);
+				//1 在0前面
+				int posB = control.getTrainPos(1);
+				if(posB == 0){
+					g.drawImage(trainBForward, 180, forwardY, null);
+				}else if(posB == 1){
+					g.drawImage(trainBBackward, 260, backwardY, null);
+				}else if(posB == 2){
+					g.drawImage(trainBBackward, 120, backwardY, null);
 				}
-			}
+				else{
+					g.drawImage(trainBForward, 50, forwardY, null);
+				}
+				
+				int posA = control.getTrainPos(0);
+				if (posA == 0) {
+					g.drawImage(trainAForward, 120, forwardY, null);
+				} else if (posA == 1) {
+					g.drawImage(trainABackward, 260, backwardY, null);
+				} else if (posA == 2) {
+					g.drawImage(trainABackward, 180, backwardY, null);
+				} else {
+					g.drawImage(trainAForward, 50, forwardY, null);
+				}
 		}
 	}
 }

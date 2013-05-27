@@ -3,6 +3,8 @@ package com.wander.train.nxt;
 import java.util.ArrayList;
 import java.util.List;
 
+import lejos.nxt.LCD;
+
 import com.wander.train.nxt.cmd.Command;
 
 public class CommandExecutor extends Thread {
@@ -36,6 +38,7 @@ public class CommandExecutor extends Thread {
 				e.printStackTrace();
 			}
 		}
+		LCD.drawString("exit CommandExecutor", 0, 0);
 	}
 
 }

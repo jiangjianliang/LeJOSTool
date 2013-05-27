@@ -95,17 +95,22 @@ public class MonitorModel implements Config{
 	 */
 	private void init() {
 		// initialize train
+		
 		for(int i=0; i < trainList.length; i++){
 			trainList[i] = new TrainInfo();
 		}
 
+		trainList[0] = new TrainInfo(5, 0, 0,1);
+		trainList[1] = new TrainInfo(5, 0, 2,0);
+		
 		// initialize station
 		for(int i=0; i < stationList.length; i++){
+			//TODO 以后火车数量增加需要修改
 			if(i == SWITCH_INDEX){
-				stationList[i] = new StationInfo(this, trainList, true);
+				stationList[i] = new StationInfo(this, trainList, true, 0);
 			}
 			else{
-				stationList[i] = new StationInfo(this, trainList, false);
+				stationList[i] = new StationInfo(this, trainList, false, 1);
 			}
 			//TODO 以后再管这个
 			new UpdateDistanceThread(receiver[i], stationList[i]).start();

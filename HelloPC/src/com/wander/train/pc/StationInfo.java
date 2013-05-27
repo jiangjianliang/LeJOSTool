@@ -29,6 +29,10 @@ public class StationInfo implements Context{
 	 * 用于记录是哪一辆火车进站
 	 */
 	private int which;
+	/**
+	 * 用于记录最开始的火车编号
+	 */
+	private int initWhich;
 	
 	/**
 	 * 本站台的索引
@@ -64,7 +68,7 @@ public class StationInfo implements Context{
 	 */
 	private boolean isSwitch = false;
 	
-	public StationInfo(MonitorModel mm, TrainInfo[] trainList, boolean isSwitch) {
+	public StationInfo(MonitorModel mm, TrainInfo[] trainList, boolean isSwitch, int initWhich) {
 		this.mm = mm;
 		this.trainList = trainList;
 		if(DISTANCE_TYPE == 0){
@@ -76,6 +80,7 @@ public class StationInfo implements Context{
 			distance = 255;
 		}
 		this.isSwitch = isSwitch;
+		this.initWhich = initWhich;
 		resetState();
 		//站台编号
 		stationIndex = autoIndex;
@@ -154,7 +159,16 @@ public class StationInfo implements Context{
 	
 	@Override
 	public void updateWhich() {
+		if(initWhich == 0){
+			which = 1;
+			initWhich = which;
+		}
+		else {
+			which = 0;
+			initWhich = which;
+		}
 		System.err.println("in updateWhich");
+		/*
 		for(int i = trainList.length -1; i >= 0; i--){
 			if(trainList[i].getDestination() == stationIndex){
 				//先记下是哪一辆火车要到达站台
@@ -162,6 +176,7 @@ public class StationInfo implements Context{
 				break;
 			}
 		}
+		*/
 		System.err.println("which is "+ which);
 	}
 

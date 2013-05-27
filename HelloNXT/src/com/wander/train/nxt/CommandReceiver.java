@@ -38,5 +38,6 @@ public class CommandReceiver extends Thread{
 				break;
 			}
 		}
+		LCD.drawString("exit CommandReceiver", 0, 1);
 	}
 }

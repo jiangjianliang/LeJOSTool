@@ -46,5 +46,6 @@ public class TouchDistance extends Thread {
 				// e.printStackTrace();
 			}
 		}
+		LCD.drawString("exit TouchDistance", 0, 0);
 	}
 }
