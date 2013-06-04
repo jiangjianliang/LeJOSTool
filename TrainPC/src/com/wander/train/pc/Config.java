@@ -5,7 +5,7 @@ public interface Config {
 		/**
 		 * 站点数量
 		 */
-		public static int STATION_NUM = 0;
+		public static int STATION_NUM = 2;
 		/**
 		 * 火车对应的起始NXT编号
 		 */
@@ -15,7 +15,7 @@ public interface Config {
 		 */
 		public static int TRAIN_NUM = 1;
 		
-		/**
+	/**
 		 * SWITCH站点的编号
 		 */
 		public static int SWITCH_INDEX  = 0;

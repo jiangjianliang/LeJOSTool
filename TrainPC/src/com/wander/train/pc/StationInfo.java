@@ -62,7 +62,7 @@ public class StationInfo implements Context{
 	 * 延迟
 	 */
 	private int delay = 0;
-	private static int DELAY_COUNT = 15;
+	private static int DELAY_COUNT = 18;
 	/**
 	 * 保持状态机的变量
 	 */

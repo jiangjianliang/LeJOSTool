@@ -1,8 +1,8 @@
 package com.wander.train.nxt.cmd;
 
-import com.wander.train.nxt.cmd.station.ExitCommand;
 import com.wander.train.nxt.cmd.station.StartCommand;
 import com.wander.train.nxt.cmd.train.ChangeSpeedCommand;
+import com.wander.train.nxt.cmd.train.TrainExitCommand;
 import com.wander.train.nxt.cmd.train.TrainStopCommand;
 import com.wander.train.nxt.common.ControlData;
 
@@ -47,7 +47,7 @@ public class TrainCommandFactory implements CommandFactory{
 			result = StartCommand.getInstance(ca);
 			break;
 		case Command.EXIT:
-			result = ExitCommand.getInstance(ca);
+			result = TrainExitCommand.getInstance(ca);
 			break;
 		case Command.TRAIN_STOP:
 			result = TrainStopCommand.getInstance();
