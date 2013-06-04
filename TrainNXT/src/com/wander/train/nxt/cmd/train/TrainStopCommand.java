@@ -1,7 +1,5 @@
 package com.wander.train.nxt.cmd.train;
 
-import com.wander.train.nxt.cmd.Command;
-
 /**
  * 停止火车的命令
  * 
@@ -22,8 +20,9 @@ public class TrainStopCommand extends TrainCommand{
 
 	@Override
 	public boolean execute() {
-		//停止马达
-		motor.stop();
+		//motor.stop();
+		//motor.flt();
+		motor.setPower(0);
 		return true;
 	}
 }

@@ -1,6 +1,7 @@
 package com.wander.train.pc;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class TrainInfo {
 	
@@ -20,15 +21,18 @@ public class TrainInfo {
 		state = 0;
 		position = 0;
 		destination = 0;
-		
-		this.sender = out;
+		if(out == null){
+			System.err.println("is null");
+		}
+		sender = out;
 	}
 	
-	public TrainInfo(int speed, int state, int position, int destination){
+	public TrainInfo(int speed, int state, int position, int destination, DataOutputStream out){
 		this.speed = speed;
 		this.state = state;
 		this.position = position;
 		this.destination = destination;
+		sender = out;
 	}
 	
 	public boolean isForward(){
@@ -81,4 +85,82 @@ public class TrainInfo {
 	public void setDestination(int destination) {
 		this.destination = destination;
 	}
+	
+	/**
+	 * 发送程序运行命令
+	 */
+	public void start(){
+		try {
+			sender.writeInt(Command.PROGRAM_START);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send program-start!");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 发送火车停止命令
+	 */
+	public void stop() {
+		try {
+			sender.writeInt(Command.TRAIN_STOP);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send train-stop!");
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 发送前进命令
+	 * @param dest
+	 */
+	public void forward(int dest){
+		setDestination(dest);
+		setForward();
+		int cmd = Command.SPEED_MARK + getSpeed();
+		
+		System.err.println("forward " +  "], dest=" + dest+", cmd="+cmd);
+		try {
+			sender.writeInt(cmd);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send train-forward!");			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 发送后退命令
+	 * @param dest
+	 */
+	public void backward(int dest){
+		setDestination(dest);
+		setBackward();
+		int cmd = Command.SPEED_MARK + getSpeed();
+		System.err.println("backward " +", dest=" + dest+", cmd="+(-cmd));
+		try {
+			sender.writeInt(-cmd);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send train-forward!");			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 发送退出程序命令
+	 */
+	public void exit(){
+		try {
+			sender.writeInt(Command.EXIT);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send train-exit!");
+			e.printStackTrace();
+		}
+	}
+	
 }

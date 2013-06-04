@@ -13,7 +13,7 @@ public class StationInfo implements Context{
 	 * 0 TouchSensor
 	 * 1 UltrasonicSensor
 	 */
-	private static int DISTANCE_TYPE = 0;
+	private static int DISTANCE_TYPE = 1;
 	
 	private MonitorModel mm;
 	/**
@@ -92,7 +92,7 @@ public class StationInfo implements Context{
 		stationIndex = autoIndex;
 		autoIndex++;
 		
-		this.sender = out;
+		sender = out;
 	}
 
 	@Override
@@ -155,6 +155,10 @@ public class StationInfo implements Context{
 			return 0;
 		}
 		else{
+			if(distance == 255){
+				System.err.println("incorrect distance");
+				return 0;
+			}
 			// train enter
 			if (preDistance > ULTRASONIC_THRESH && (preDistance = distance) <= ULTRASONIC_THRESH)// TODO 15这个值需要修改
 				return 1;
@@ -167,6 +171,7 @@ public class StationInfo implements Context{
 	
 	@Override
 	public void updateWhich() {
+		/*
 		if(initWhich == 0){
 			which = 1;
 			initWhich = which;
@@ -175,6 +180,9 @@ public class StationInfo implements Context{
 			which = 0;
 			initWhich = which;
 		}
+		*/
+		//TODO 多辆火车时需要修改
+		which = 0;
 		System.err.println("in updateWhich");
 		/*
 		for(int i = trainList.length -1; i >= 0; i--){
@@ -188,32 +196,77 @@ public class StationInfo implements Context{
 		System.err.println("which is "+ which);
 	}
 
-	@Override
-	public void commandForward(int dest) throws IOException {
-		//System.err.println("in commandForward + "+ dest);
-		mm.commandForward(which, dest);
-	}
-
-	@Override
-	public void commandBackward(int dest)  throws IOException {
-		//System.err.println("in commandBackward + "+ dest);
-		//TODO for test
-		mm.commandBackward(which, dest);
+	/**
+	 * 发送程序运行命令
+	 */
+	public void start(){
+		
+		try {
+			sender.writeInt(Command.PROGRAM_START);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send program-start!");
+			e.printStackTrace();
+		}
 		
 	}
 	
+
+	/**
+	 * 发送退出程序命令
+	 */
+	public void exit(){
+		try {
+			sender.writeInt(Command.EXIT);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send station-exit!");
+			e.printStackTrace();
+		}
+	}
+	
+	public void switchMain(){
+		try {
+			sender.writeInt(Command.SWITCH_MAIN);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send station-switchmain!");
+			e.printStackTrace();
+		}
+	}
+	
+	public void switchBranch(){
+		try {
+			sender.writeInt(Command.SWITCH_BRANCH);
+			sender.flush();
+		} catch (IOException e) {
+			System.err.println("ERROR-send station-switchbranch!");
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
-	public void commandStop() throws IOException {
+	public void commandForward(int dest){
+		//System.err.println("in commandForward + "+ dest);
+		mm.commandTrainForward(which, dest);
+	}
+
+	@Override
+	public void commandBackward(int dest){
+		//System.err.println("in commandBackward + "+ dest);
+		mm.commandTrainBackward(which, dest);
+	}
+	
+	@Override
+	public void commandStop(){
 		//System.err.println("in commandStop + "+ which);
-		mm.commandStop(which);
+		mm.commandTrainStop(which);
 	}
 
 	@Override
-	public void commandSwitchMain(boolean flag) throws IOException {
+	public void commandSwitchMain(boolean flag){
 		//System.err.println("in commandSwitch + "+ flag);
-		mm.commandSwitchMain(flag);
+		mm.commandStationSwitch(flag);
 	}
-
-
 	
 }

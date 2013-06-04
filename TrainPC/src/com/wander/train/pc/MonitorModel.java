@@ -71,6 +71,7 @@ public class MonitorModel implements Config{
 		}
 		else if(CONN_TYPE == 1){
 			boolean total = true;
+			
 			try {
 				for(int i = 0; i < stationList.length; i++){
 					stationNxtList[i] = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
@@ -79,13 +80,13 @@ public class MonitorModel implements Config{
 				}
 
 			} catch (NXTCommException e) {
-				e.printStackTrace();
-				System.err.println("error while connection to Station.");
+				//e.printStackTrace();
+				System.err.println("error while connecting to Station.");
 				System.exit(-1);
 			}
 
 			if (!total) {
-				System.err.println("error while connection to Station.");
+				System.err.println("error while connecting to Station.");
 				System.exit(-1);
 			}
 			
@@ -100,17 +101,18 @@ public class MonitorModel implements Config{
 			try{
 				for(int i=0; i < trainList.length; i++){
 					trainNxtList[i] = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-					trainConnected[i] = stationNxtList[i].open(nxts[TRAIN_NXT_START+i]);
-					total = total && stationConnected[i];
+					System.err.println(nxts[TRAIN_NXT_START+i].deviceAddress);
+					trainConnected[i] = trainNxtList[i].open(nxts[TRAIN_NXT_START+i]);
+					total = total && trainConnected[i];
 				}
 			} catch(NXTCommException e){
-				e.printStackTrace();
-				System.err.println("error while connection to Train.");
+				//e.printStackTrace();
+				System.err.println("error while connecting to Train.");
 				System.exit(-1);
 			}
 			
 			if(!total){
-				System.err.println("error while connection to Train.");
+				System.err.println("error while connecting to Train.");
 				System.exit(-1);
 			}
 			
@@ -127,11 +129,11 @@ public class MonitorModel implements Config{
 		// initialize train
 		
 		for(int i=0; i < trainList.length; i++){
-			trainList[i] = new TrainInfo(trainSender[i]);
+			trainList[i] = new TrainInfo(7,0, 0, 1, trainSender[i]);
 		}
 
-		trainList[0] = new TrainInfo(5, 0, 0,1);
-		trainList[1] = new TrainInfo(5, 0, 2,0);
+		//trainList[0] = new TrainInfo(5, 0, 0,1);
+		//trainList[1] = new TrainInfo(5, 0, 2,0);
 		
 		// initialize station
 		for(int i=0; i < stationList.length; i++){
@@ -156,68 +158,46 @@ public class MonitorModel implements Config{
 			stationList[i].push();
 		}
 	}
-	//具体的命令
+	
+	/**
+	 * 开始运行命令
+	 */
 	public void commandStart() {
 		//TODO 以后修改
 		for(int i =0; i< stationList.length; i++){
 			stationList[i].resetState();
-			try {
-				stationSender[i].writeInt(Command.PROGRAM_START);
-				stationSender[i].flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			stationList[i].start();
 		}
+		
+		for(int i=0; i < trainList.length; i++){
+			trainList[i].start();
+		}
+	}
+	/**
+	 * 停止火车命令
+	 * @param i
+	 */
+	public void commandTrainStop(int i) {
+		if(i >= trainList.length){
+			return;
+		}
+		trainList[i].stop();
 	}
 	
-	public void commandStop(int i) throws IOException {
-		trainList[i].setStop();
-		// trainList[i].setDestination(trainList[i].getPosition());
-		if (i == 0) {
-			System.err.println("sending stop for [i=" + i + "], cmd="+Command.TRAIN_STOP_A);
-			for(int j=0; j < stationList.length; j++){
-				stationSender[j].writeInt(Command.TRAIN_STOP_A);				
-			}
-		} else {
-			System.err.println("sending stop for [i=" +  i + "], cmd="+Command.TRAIN_STOP_B);
-			for(int j=0; j < stationList.length; j++){				
-				stationSender[j].writeInt(Command.TRAIN_STOP_B);
-			}
+	public void commandTrainForward(int i, int dest){
+		if(i >= trainList.length){
+			return;
 		}
-		for(int j =0; j< stationList.length; j++){
-			stationSender[j].flush();			
-		}
+		trainList[i].forward(dest);
 	}
 
-	public void commandForward(int i, int dest) throws IOException {
-		trainList[i].setDestination(dest);
-		trainList[i].setForward();
-		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
-		if (i == 0) {
-			cmd += Command.TRAIN_MARK_A;
+	public void commandTrainBackward(int i, int dest){
+		if(i >= trainList.length){
+			return;
 		}
-		System.err.println("forward [i=" + i + "], dest=" + dest+", cmd="+cmd);
-		for(int j =0; j< stationList.length; j++){
-			stationSender[j].writeInt(cmd);
-			stationSender[j].flush();			
-		}
-		//sender[0].flush();
+		trainList[i].backward(dest);
 	}
-
-	public void commandBackward(int i, int dest) throws IOException {
-		trainList[i].setDestination(dest);
-		trainList[i].setBackward();
-		int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
-		if (i == 0) {
-			cmd += Command.TRAIN_MARK_A;
-		}
-		System.err.println("backward [i=" + i + "], dest=" + dest+", cmd="+(-cmd));
-		for(int j =0; j< stationList.length; j++){
-			stationSender[j].writeInt(-cmd);
-			stationSender[j].flush();
-		}
-	}
-
+/*
 	public void commandSpeedUp(int i) throws IOException {
 		int speed = trainList[i].getSpeed() + 1;
 		if ((speed >= 1) && (speed <= 7))
@@ -251,22 +231,31 @@ public class MonitorModel implements Config{
 			}
 		}
 	}
-
-	public void commandExit() throws IOException {
-		for (int i = 0; i < stationList.length; i++) {
-			stationSender[i].writeInt(Command.EXIT);
-			stationSender[i].flush();
+*/
+	/**
+	 * 退出程序命令
+	 * @throws IOException
+	 */
+	public void commandExit() {
+		for(int i=0; i < stationList.length; i++){
+			stationList[i].exit();
+		}
+		for(int i=0; i < trainList.length; i++){
+			trainList[i].exit();
 		}
 	}
-
-	public void commandSwitchMain(boolean flag) throws IOException {
-		if (flag) {
-			stationSender[0].writeInt(Command.SWITCH_MAIN);
-			stationSender[0].flush();
-		} else {
-			stationSender[0].writeInt(Command.SWITCH_BRANCH);
-			stationSender[0].flush();
+	/**
+	 * 换轨命令
+	 * @param flag
+	 */
+	public void commandStationSwitch(boolean flag){
+		if(flag){
+			stationList[SWITCH_INDEX].switchMain();
 		}
+		else{
+			stationList[SWITCH_INDEX].switchBranch();
+		}
+			
 	}
 
 	public int getTrainPos(int i) {
@@ -282,7 +271,7 @@ public class MonitorModel implements Config{
 	 * 释放资源
 	 */
 	public void clean() {
-		// TODO 释放资源
+		//释放资源
 		for(int i=0; i< stationSender.length; i++){
 			try {
 				stationSender[i].close();
@@ -304,6 +293,29 @@ public class MonitorModel implements Config{
 				//e.printStackTrace();
 			}
 		}
+		
+		for(int i=0; i < trainSender.length; i++){
+			try {
+				trainSender[i].close();
+			} catch (IOException e) {
+				//e.printStackTrace();
+			}
+		}
+		for(int i=0; i < trainReceiver.length; i++){
+			try {
+				trainReceiver[i].close();
+			} catch (IOException e) {
+				//e.printStackTrace();
+			}
+		}
+		for(int i=0; i < trainNxtList.length; i++){
+			try {
+				trainNxtList[i].close();
+			} catch (IOException e) {
+				//e.printStackTrace();
+			}
+		}
+		
 	}
 
 	

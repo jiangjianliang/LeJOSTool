@@ -38,9 +38,6 @@ public class TrainCommandFactory implements CommandFactory{
 	 * 格式化命令
 	 * 
 	 * @param cmd
-	 * @param link
-	 * @param sonic
-	 * @param out
 	 * @return
 	 */
 	public Command parseCommand(int cmd) {
@@ -52,29 +49,21 @@ public class TrainCommandFactory implements CommandFactory{
 		case Command.EXIT:
 			result = ExitCommand.getInstance(ca);
 			break;
-		//TODO 以后修改,只需要一个
-		case Command.TRAIN_STOP_A:
-			result = TrainStopCommand.getInstance();
-			break;
-		case Command.TRAIN_STOP_B:
+		case Command.TRAIN_STOP:
 			result = TrainStopCommand.getInstance();
 			break;
 		default:
 			boolean dir = cmd > 0; // true : forward; false : backward
 			cmd = Math.abs(cmd);
-			int speed = (cmd % Command.TRAIN_MARK_A) % Command.SPEED_MARK;
+			int speed = cmd % Command.SPEED_MARK % 8;//TODO 最大速度为90%
 			int newSpeed;
 			if (dir) {
 				newSpeed = speed;
 			} else {
-				newSpeed = 16 - speed;
+				newSpeed = -speed;
 			}
 			LCD.drawInt(newSpeed, 0, 5);
-			if (cmd > Command.TRAIN_MARK_A) {
-				result = ChangeSpeedCommand.getInstance(newSpeed);
-			} else {
-				result = ChangeSpeedCommand.getInstance(newSpeed);
-			}
+			result = ChangeSpeedCommand.getInstance(newSpeed);
 		}
 		return result;
 	}

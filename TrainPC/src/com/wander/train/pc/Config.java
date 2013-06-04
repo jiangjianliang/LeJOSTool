@@ -5,7 +5,7 @@ public interface Config {
 		/**
 		 * 站点数量
 		 */
-		public static int STATION_NUM = 2;
+		public static int STATION_NUM = 0;
 		/**
 		 * 火车对应的起始NXT编号
 		 */

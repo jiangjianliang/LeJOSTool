@@ -92,12 +92,7 @@ public class MonitorView extends JFrame {
 	@Override
 	protected void processWindowEvent(WindowEvent e) {
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-			try {
-				control.commandExit();
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(null, "exit error.", "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			control.commandExit();
 			control.clean();
 		}
 		super.processWindowEvent(e);
@@ -125,14 +120,8 @@ public class MonitorView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					control.commandSwitchMain(true);
-					//control.commandForward(0,3);
+					control.commandStationSwitch(true);
 					infoArea.setText("switch to Main.");
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "switch to Main error.",
-							"ERROR", JOptionPane.ERROR_MESSAGE);
-				}
 			}
 		});
 
@@ -140,13 +129,8 @@ public class MonitorView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					control.commandSwitchMain(false);
+					control.commandStationSwitch(false);
 					infoArea.setText("switch to Branch.");
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "switch to Branch error.",
-							"ERROR", JOptionPane.ERROR_MESSAGE);
-				}
 			}
 		});
 
@@ -155,28 +139,20 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				timer.start();
-				try {
-					control.commandStart();
-					control.commandBackward(1, 1);
-					infoArea.setText("start");
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "start error.", "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				control.commandStart();
+				control.commandTrainBackward(0, 1);
+				infoArea.setText("start");
 			}
 		});
 		btStartB.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					//control.commandStart();
-					control.commandForward(0, 2);
-					infoArea.setText("start");
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "start error.", "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				//TODO 先注释掉
+				/*	
+				control.commandTrainForward(0, 2);
+				infoArea.setText("start");
+				*/
 			}
 			
 		});
@@ -185,15 +161,9 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				timer.stop();
-				try{
-					control.commandStop(0);
-					control.commandStop(1);
-					infoArea.setText("stop");
-				}
-				catch(IOException e1){
-					JOptionPane.showMessageDialog(null, "stop error.", "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				control.commandTrainStop(0);
+				//control.commandTrainStop(1);
+				infoArea.setText("stop");
 			}
 			
 		});
@@ -268,6 +238,7 @@ public class MonitorView extends JFrame {
 			if (backImage != null)
 				g.drawImage(backImage, 0, 0, null);
 				//1 在0前面
+				/*
 				int posB = control.getTrainPos(1);
 				if(posB == 0){
 					g.drawImage(trainBForward, 180, forwardY, null);
@@ -279,7 +250,7 @@ public class MonitorView extends JFrame {
 				else{
 					g.drawImage(trainBForward, 50, forwardY, null);
 				}
-				
+				*/
 				int posA = control.getTrainPos(0);
 				if (posA == 0) {
 					g.drawImage(trainAForward, 120, forwardY, null);

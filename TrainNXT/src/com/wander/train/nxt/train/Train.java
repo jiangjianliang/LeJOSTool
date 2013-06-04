@@ -26,8 +26,8 @@ public class Train implements Config {
 	
 	
 	public static void main(String[] args) {
+		
 		LCD.drawString("waiting...", 0, 0);
-
 
 		NXTConnection connection = Bluetooth.waitForConnection();
 		DataInputStream pcDin = connection.openDataInputStream();

@@ -1,7 +1,5 @@
 package com.wander.train.nxt.cmd.train;
 
-import com.wander.train.nxt.cmd.Command;
-
 import lejos.nxt.LCD;
 
 
@@ -33,14 +31,16 @@ public class ChangeSpeedCommand extends TrainCommand {
 	public boolean execute() {
 		//LCD.drawString(channel + "] speed ", 0, 7);
 		LCD.drawInt(cmd, 2, 9, 7);
-		
-		motor.setSpeed(Math.abs(cmd) * 100);
-		if(cmd > 0){
-			motor.forward();			
+		//TODO 速度区继续细化
+		if(cmd > 0 ){
+			motor.setPower(cmd * 10);
+			motor.forward();						
 		}
 		else{
-			motor.backward();
+			motor.setPower((-cmd) * 10);
+			motor.backward();		
 		}
+		
 		return true;
 	}
 

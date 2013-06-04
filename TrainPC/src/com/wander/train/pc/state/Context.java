@@ -34,26 +34,22 @@ public interface Context {
 	/**
 	 * 向前运行
 	 * @param dest
-	 * @throws IOException
 	 */
-	public void commandForward(int dest)  throws IOException;
+	public void commandForward(int dest);
 	/**
 	 * 向后运行
 	 * @param dest
-	 * @throws IOException
 	 */
-	public void commandBackward(int dest)  throws IOException;
+	public void commandBackward(int dest);
 	/**
 	 * 停止火车
-	 * @throws IOException
 	 */
-	public void commandStop() throws IOException;
+	public void commandStop();
 	/**
 	 * 变换轨道
 	 * @param flag
-	 * @throws IOException
 	 */
-	public void commandSwitchMain(boolean flag) throws IOException;
+	public void commandSwitchMain(boolean flag);
 	
 	
 }
