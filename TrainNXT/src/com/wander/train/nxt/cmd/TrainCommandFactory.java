@@ -55,7 +55,7 @@ public class TrainCommandFactory implements CommandFactory{
 		default:
 			boolean dir = cmd > 0; // true : forward; false : backward
 			cmd = Math.abs(cmd);
-			int speed = cmd % Command.SPEED_MARK % 8;//TODO 最大速度为90%
+			int speed = cmd % Command.SPEED_MARK % 11;//TODO 最大速度为90%
 			int newSpeed;
 			if (dir) {
 				newSpeed = speed;

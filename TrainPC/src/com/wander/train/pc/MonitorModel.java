@@ -175,63 +175,45 @@ public class MonitorModel implements Config{
 	}
 	/**
 	 * 停止火车命令
-	 * @param i
+	 * @param which
 	 */
-	public void commandTrainStop(int i) {
-		if(i >= trainList.length){
+	public void commandTrainStop(int which) {
+		if(which >= trainList.length){
 			return;
 		}
-		trainList[i].stop();
+		trainList[which].stop();
 	}
 	
-	public void commandTrainForward(int i, int dest){
-		if(i >= trainList.length){
+	public void commandTrainForward(int which, int dest){
+		if(which >= trainList.length){
 			return;
 		}
-		trainList[i].forward(dest);
+		trainList[which].setSpeed(10);
+		trainList[which].forward(dest);
 	}
 
-	public void commandTrainBackward(int i, int dest){
-		if(i >= trainList.length){
+	public void commandTrainBackward(int which, int dest){
+		if(which >= trainList.length){
 			return;
 		}
-		trainList[i].backward(dest);
+		trainList[which].setSpeed(10);
+		trainList[which].backward(dest);
 	}
-/*
-	public void commandSpeedUp(int i) throws IOException {
-		int speed = trainList[i].getSpeed() + 1;
-		if ((speed >= 1) && (speed <= 7))
-			trainList[i].setSpeed(speed);
-		if (!trainList[i].isStop()) {
-			int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
-			if (i == 0) {
-				cmd += Command.TRAIN_MARK_A;
-			}
-			cmd = (trainList[i].isForward() ? cmd : cmd * -1);
-			for(int j=0; j < stationList.length; j++){
-				stationSender[j].writeInt(cmd);
-				stationSender[j].flush();				
-			}
+	
+	public void commandTrainSlowDown(int which, int delta){
+		if( which>= trainList.length){
+			return;
 		}
+		trainList[which].slowDown(delta);
 	}
-
-	public void commandSpeedDown(int i) throws IOException {
-		int speed = trainList[i].getSpeed() - 1;
-		if ((speed >= 1) && (speed <= 7))
-			trainList[i].setSpeed(speed);
-		if (!trainList[i].isStop()) {
-			int cmd = Command.SPEED_MARK + trainList[i].getSpeed();
-			if (i == 0) {
-				cmd += Command.TRAIN_MARK_A;
-			}
-			cmd = (trainList[i].isForward() ? cmd : cmd * -1);
-			for(int j = 0; j< stationList.length; j++){
-				stationSender[j].writeInt(cmd);
-				stationSender[j].flush();				
-			}
+	
+	public void commandTrainSpeedUp(int which, int delta){
+		if( which>= trainList.length){
+			return;
 		}
+		trainList[which].speedUp(delta);
 	}
-*/
+	
 	/**
 	 * 退出程序命令
 	 * @throws IOException

@@ -11,6 +11,7 @@ import com.wander.train.nxt.common.Config;
 import com.wander.train.nxt.common.ControlData;
 
 import lejos.nxt.Button;
+import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
@@ -38,7 +39,8 @@ public class NormalStation implements Config {
 		LCD.drawString("cmd:", 0, 2);
 
 		UltrasonicSensor sonic = new UltrasonicSensor(UltrasonicPort);
-
+		ColorSensor color = new ColorSensor(ColorPort);
+		
 		ControlData ca = new ControlData();
 		StationCommandFactory cmdFactory = StationCommandFactory.getInstance( ca);
 
@@ -49,7 +51,7 @@ public class NormalStation implements Config {
 				cmdFactory, cmdExecutor);
 		cmdReceiver.start();
 		
-		UltrasonicDistance report = new UltrasonicDistance(sonic, pcDout, ca);
+		UltrasonicDistance report = new UltrasonicDistance(sonic, color, pcDout, ca);
 		report.start();
 		
 		while (!Button.ESCAPE.isDown() && ca.isKeepOn()) {

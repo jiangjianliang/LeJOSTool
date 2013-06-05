@@ -11,12 +11,21 @@ public class TrainEnterState extends State {
 
 	@Override
 	public void handle() throws IOException {
-		context.setState(new TrainStopState(context));
+		int result = context.updateDistance();
+		if(result == 1){
+			context.setState(new TrainStopState(context));			
+		}
 	}
 
 	@Override
 	public void doExtra() throws IOException {
-		// do nothing
+		//减速
+		if(context.isSwitch()){
+			context.commandSlowDown(3);						
+		}
+		else{
+			context.commandSlowDown(2);			
+		}
 	}
 
 	@Override

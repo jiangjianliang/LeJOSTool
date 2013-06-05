@@ -23,11 +23,9 @@ public class TrainStartState extends State {
 		// 发出列车出发命令
 		if(context.isSwitch()){
 			context.commandForward(2);
-			//mm.commandForward(which, 2);//朝着A站台
 		}
 		else{
 			context.commandBackward(1);
-			//mm.commandBackward(which, 1);//朝着B站台
 		}
 	}
 

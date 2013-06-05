@@ -13,6 +13,8 @@ public interface Config {
 	public final static int DISTANCE_TYPE = 0;
 	
 	public final static I2CPort IrLinkPort = SensorPort.S1;
+	@Deprecated
 	public final static ADSensorPort TouchPort = SensorPort.S3;
+	public final static SensorPort ColorPort = SensorPort.S3;
 	public final static I2CPort UltrasonicPort = SensorPort.S4;
 }

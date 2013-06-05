@@ -11,16 +11,23 @@ public class InProgressState extends State {
 
 	@Override
 	public void handle() throws IOException {
-		// 进行某些计算
-		int result = context.updateDistance();
-		if (result == 1) {
+		boolean result = context.updateColor();
+		//TODO result的值需要重新规划一下
+		if(result ){
 			context.setState(new TrainEnterState(context));
 		}
+		
 	}
 
 	@Override
 	public void doExtra() throws IOException {
-		// do nothing
+		//TODO 不同的速度
+		if(context.isSwitch()){
+			context.commandSlowDown(2);
+		}
+		else{
+			context.commandSlowDown(1);
+		}
 	}
 
 	@Override

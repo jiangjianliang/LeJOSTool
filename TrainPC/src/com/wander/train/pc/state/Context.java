@@ -17,9 +17,10 @@ public interface Context {
 	public int updateDistance();
 	
 	/**
-	 * 更新是哪一辆火车
+	 * 更新颜色
+	 * @return boolean
 	 */
-	public void updateWhich();
+	public boolean updateColor();
 	
 	/**
 	 * 是否含有换轨控制
@@ -41,6 +42,18 @@ public interface Context {
 	 * @param dest
 	 */
 	public void commandBackward(int dest);
+	
+	/**
+	 * 减速
+	 * @param delta
+	 */
+	public void commandSlowDown(int delta);
+	/**
+	 * 加速
+	 * @param delta
+	 */
+	public void commandSpeedUp(int delta);
+	
 	/**
 	 * 停止火车
 	 */

@@ -19,11 +19,14 @@ public class UpdateDistanceThread extends Thread {
 	public void run() {
 		while(true){
 			try {
-				int dis = in.readInt();
+				int result = in.readInt();
+				int dis = result/100;
+				int color = result%100;
 				//System.err.println(dis);
 				station.setDistance(dis);
+				station.setColor(color);
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				System.exit(-1);
 			}
 			
 			try {

@@ -25,6 +25,11 @@ public class StationInfo implements Context{
 	 */
 	private int distance;
 
+	/**
+	 * 颜色,用于分辨火车
+	 */
+	private int color = 7;
+	
 	private TrainInfo[] trainList;
 	/**
 	 * 用于记录是哪一辆火车进站
@@ -108,6 +113,14 @@ public class StationInfo implements Context{
 		return distance;
 	}
 	
+	public synchronized void setColor(int color){
+		this.color = color;
+	}
+	
+	public synchronized int getColor(){
+		return color;
+	}
+	
 	/**
 	 * 推动状态机向前走的方法
 	 */
@@ -170,30 +183,32 @@ public class StationInfo implements Context{
 	}
 	
 	@Override
-	public void updateWhich() {
-		/*
-		if(initWhich == 0){
-			which = 1;
-			initWhich = which;
-		}
-		else {
+	public boolean updateColor(){
+		//System.err.println("color is "+ color);
+		//根据color返回是哪一辆火车进站了
+		if(isFirst(color)){
 			which = 0;
-			initWhich = which;
+			return true;
 		}
-		*/
-		//TODO 多辆火车时需要修改
-		which = 0;
-		System.err.println("in updateWhich");
-		/*
-		for(int i = trainList.length -1; i >= 0; i--){
-			if(trainList[i].getDestination() == stationIndex){
-				//先记下是哪一辆火车要到达站台
-				which = i;
-				break;
-			}
+		else if(isSecond(color)){
+			which = 1;
+			return true;
 		}
-		*/
-		System.err.println("which is "+ which);
+		return false;
+	}
+	//TODO 需要根据颜色来识别
+	private boolean isFirst(int color){
+		if(color == 3){
+			return true;			
+		}
+		return false;
+	}
+	
+	private boolean isSecond(int color){
+		if(color == 0){
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -247,16 +262,24 @@ public class StationInfo implements Context{
 	
 	@Override
 	public void commandForward(int dest){
-		//System.err.println("in commandForward + "+ dest);
 		mm.commandTrainForward(which, dest);
 	}
 
 	@Override
 	public void commandBackward(int dest){
-		//System.err.println("in commandBackward + "+ dest);
 		mm.commandTrainBackward(which, dest);
 	}
 	
+	@Override
+	public void commandSlowDown(int delta) {
+		mm.commandTrainSlowDown(which, delta);
+	}
+
+	@Override
+	public void commandSpeedUp(int delta) {
+		mm.commandTrainSpeedUp(which, delta);
+	}
+
 	@Override
 	public void commandStop(){
 		//System.err.println("in commandStop + "+ which);

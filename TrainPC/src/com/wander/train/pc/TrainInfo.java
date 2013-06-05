@@ -116,6 +116,7 @@ public class TrainInfo {
 	 * @param dest
 	 */
 	public void forward(int dest){
+		//speed = 7;
 		setDestination(dest);
 		setForward();
 		int cmd = Command.SPEED_MARK + getSpeed();
@@ -136,6 +137,8 @@ public class TrainInfo {
 	 * @param dest
 	 */
 	public void backward(int dest){
+		//speed = 7;
+		
 		setDestination(dest);
 		setBackward();
 		int cmd = Command.SPEED_MARK + getSpeed();
@@ -148,6 +151,43 @@ public class TrainInfo {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	/**
+	 * 加速
+	 * @param i
+	 */
+	public void speedUp(int i){
+		int newSpeed = getSpeed()+1;
+		if(newSpeed > 10){
+			newSpeed = 10;
+		}
+		changeSpeed(newSpeed);
+	}
+	/**
+	 * 减速
+	 */
+	public void slowDown(int i){
+		int newSpeed = getSpeed()-i;
+		if(newSpeed < 5){
+			newSpeed = 5;
+		}
+		changeSpeed(newSpeed);
+	}
+	
+	private void changeSpeed(int speed){
+		System.err.println("changespeed "+speed);
+		setSpeed(speed);
+		int cmd = Command.SPEED_MARK + getSpeed();
+		cmd = (isForward() ? cmd : -cmd);
+		try{
+			sender.writeInt(cmd);
+			sender.flush();
+		}
+		catch(IOException e) {
+			System.err.println("ERROR-send train-change!");
+			e.printStackTrace();
+		}
 	}
 	
 	/**

@@ -12,15 +12,17 @@ public class TrainLeaveState extends State {
 	@Override
 	public void handle() throws IOException {
 
+		context.incDelay();
 		if (context.isSwitch()) {
-			context.incDelay();
 			if(context.isExpired()){
 				// 转向BackwardSwitchRail
 				context.setState(new RailSwitchMainState(context));
 			}
 		} else {
-			// 转向InProgress
-			context.setState(new InProgressState(context));
+			if(context.isExpired()){
+				// 转向InProgress
+				context.setState(new InProgressState(context));
+			}
 		}
 	}
 

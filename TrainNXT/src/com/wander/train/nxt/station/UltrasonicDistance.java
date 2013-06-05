@@ -5,18 +5,21 @@ import java.io.IOException;
 
 import com.wander.train.nxt.common.ControlData;
 
+import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.UltrasonicSensor;
 
 public class UltrasonicDistance extends Thread {
 
 	private UltrasonicSensor sonic;
+	private ColorSensor color;
 	private DataOutputStream out;
 	private ControlData ca;
 
-	public UltrasonicDistance(UltrasonicSensor sonic, DataOutputStream out,
+	public UltrasonicDistance(UltrasonicSensor sonic, ColorSensor color, DataOutputStream out,
 			ControlData ca) {
 		this.sonic = sonic;
+		this.color= color;
 		this.out = out;
 		this.ca = ca;
 	}
@@ -27,9 +30,19 @@ public class UltrasonicDistance extends Thread {
 			if (ca.isStart()) {
 
 				int dis = sonic.getDistance();
+				//TODO 正确使用ColorSensor
+				color.setFloodlight(ColorSensor.WHITE);
+				try {
+					sleep(10);
+				} catch (InterruptedException e) {
+					//e.printStackTrace();
+				}
+				int colorIndex = color.getColor().getColor();
+				LCD.drawInt(colorIndex, 0, 7);
+				int result = dis*100 + colorIndex;
 				LCD.drawString(String.valueOf(dis), 10, 1);
 				try {
-					out.writeInt(dis);
+					out.writeInt(result);
 					out.flush();
 
 				} catch (IOException e1) {
