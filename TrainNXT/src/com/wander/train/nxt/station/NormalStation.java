@@ -13,8 +13,6 @@ import com.wander.train.nxt.common.ControlData;
 import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
-import lejos.nxt.SensorPort;
-import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
@@ -36,7 +34,8 @@ public class NormalStation implements Config {
 
 		LCD.drawString("connected.", 0, 0);
 		LCD.drawString("distance:", 0, 1);
-		LCD.drawString("cmd:", 0, 2);
+		LCD.drawString("color", 0, 2);
+		LCD.drawString("cmd:", 0, 3);
 
 		UltrasonicSensor sonic = new UltrasonicSensor(UltrasonicPort);
 		ColorSensor color = new ColorSensor(ColorPort);
@@ -51,7 +50,13 @@ public class NormalStation implements Config {
 				cmdFactory, cmdExecutor);
 		cmdReceiver.start();
 		
-		UltrasonicDistance report = new UltrasonicDistance(sonic, color, pcDout, ca);
+		UltrasonicDetector ultrasonicDector = new UltrasonicDetector(sonic, ca);
+		ultrasonicDector.start();
+		
+		ColorDetector colorDetector = new ColorDetector(color, ca);
+		colorDetector.start();
+		
+		SensorReporter report = new SensorReporter(pcDout, ca);
 		report.start();
 		
 		while (!Button.ESCAPE.isDown() && ca.isKeepOn()) {

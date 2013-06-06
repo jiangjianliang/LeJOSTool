@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.wander.train.nxt.cmd.StationCommandFactory;
 import com.wander.train.nxt.cmd.TrainCommandFactory;
 import com.wander.train.nxt.common.CommandExecutor;
 import com.wander.train.nxt.common.CommandReceiver;
@@ -13,9 +12,6 @@ import com.wander.train.nxt.common.ControlData;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.nxt.SensorPort;
-import lejos.nxt.TouchSensor;
-import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 
@@ -34,7 +30,7 @@ public class Train implements Config {
 		DataOutputStream pcDout = connection.openDataOutputStream();
 
 		LCD.drawString("connected.", 0, 0);
-		LCD.drawString("distance:", 0, 1);
+		
 		LCD.drawString("cmd:", 0, 2);
 
 		ControlData ca = new ControlData();

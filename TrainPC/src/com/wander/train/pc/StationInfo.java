@@ -30,16 +30,10 @@ public class StationInfo implements Context{
 	 */
 	private int color = 7;
 	
-	private TrainInfo[] trainList;
 	/**
 	 * 用于记录是哪一辆火车进站
 	 */
 	private int which;
-	/**
-	 * 用于记录最开始的火车编号
-	 */
-	private int initWhich;
-	
 	/**
 	 * 本站台的索引
 	 */
@@ -81,7 +75,6 @@ public class StationInfo implements Context{
 	
 	public StationInfo(MonitorModel mm, TrainInfo[] trainList, boolean isSwitch, int initWhich, DataOutputStream out) {
 		this.mm = mm;
-		this.trainList = trainList;
 		if(DISTANCE_TYPE == 0){
 			preDistance = 0;
 			distance = 0;
@@ -91,7 +84,6 @@ public class StationInfo implements Context{
 			distance = 255;
 		}
 		this.isSwitch = isSwitch;
-		this.initWhich = initWhich;
 		resetState();
 		//站台编号
 		stationIndex = autoIndex;

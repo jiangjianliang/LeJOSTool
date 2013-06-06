@@ -7,7 +7,6 @@ import java.io.IOException;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
-import lejos.pc.comm.NXTConnector;
 import lejos.pc.comm.NXTInfo;
 
 public class MonitorModel implements Config{

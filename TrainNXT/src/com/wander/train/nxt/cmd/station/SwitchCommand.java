@@ -31,13 +31,13 @@ public class SwitchCommand implements Command {
 	@Override
 	public boolean execute() {
 		if (switchToMain) {
-			Motor.A.setSpeed(DEGREE);		
+			motor.setSpeed(DEGREE);		
 			LCD.drawString("switch main  ", 0, 7);
-			Motor.A.rotate(DEGREE);
+			motor.rotate(DEGREE);
 		} else {
-			Motor.A.setSpeed(DEGREE);		
+			motor.setSpeed(DEGREE);		
 			LCD.drawString("switch branch", 0, 7);
-			Motor.A.rotate(-DEGREE);
+			motor.rotate(-DEGREE);
 		}
 		return true;
 	}

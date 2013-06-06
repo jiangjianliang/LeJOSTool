@@ -29,7 +29,7 @@ public class CommandReceiver extends Thread{
 			int cmd;
 			try {
 				cmd = in.readInt();
-				LCD.drawInt(cmd, 6, 5, 2);
+				LCD.drawInt(cmd, 6, 5, 3);
 				Command concreteCommand = cmdFactory.parseCommand(cmd);
 				cmdExecutor.addCommand(concreteCommand);
 			} catch (IOException e) {
