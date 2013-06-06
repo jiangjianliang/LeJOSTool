@@ -1,7 +1,5 @@
 package com.wander.train.pc.state;
 
-import java.io.IOException;
-
 
 public class TrainLeaveState extends State {
 
@@ -10,8 +8,7 @@ public class TrainLeaveState extends State {
 	}
 
 	@Override
-	public void handle() throws IOException {
-
+	public void handle() {
 		context.incDelay();
 		if (context.isSwitch()) {
 			if(context.isExpired()){
@@ -27,7 +24,7 @@ public class TrainLeaveState extends State {
 	}
 
 	@Override
-	public void doExtra() throws IOException {
+	public void doExtra() {
 		// do nothing
 		context.resetDelay();
 	}

@@ -1,4 +1,4 @@
-package com.wander.train.pc;
+package com.wander.train.pc.common;
 
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -76,12 +76,7 @@ public class MonitorView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					control.push();
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "state error.", "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				control.push();
 				updateGUI();
 			}
 		});

@@ -1,9 +1,15 @@
-package com.wander.train.pc;
+package com.wander.train.pc.train;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.wander.train.pc.common.BluetoothWriter;
+import com.wander.train.pc.common.Command;
+import com.wander.train.pc.common.HeartDetectable;
 
-public class TrainInfo {
+/**
+ * 火车信息
+ * @author wander
+ *
+ */
+public class TrainInfo implements HeartDetectable{
 	
 	private int speed;
 	private int state;	//0 : stop;		1 : forward;	-1 : backward;
@@ -11,28 +17,29 @@ public class TrainInfo {
 	private int destination;		//0 : none;		1 : sB;		2 : sA;
 	
 	/**
-	 * 发送数据流
+	 * 心跳检测
 	 */
-	private DataOutputStream sender;
+	private boolean beatFlag;
 	
+	/**
+	 * 发送数据
+	 */
+	private BluetoothWriter writer;
 	
-	public TrainInfo(DataOutputStream out){
+	public TrainInfo(BluetoothWriter writer){
 		speed = 4;
 		state = 0;
 		position = 0;
 		destination = 0;
-		if(out == null){
-			System.err.println("is null");
-		}
-		sender = out;
+		this.writer = writer;
 	}
 	
-	public TrainInfo(int speed, int state, int position, int destination, DataOutputStream out){
+	public TrainInfo(int speed, int state, int position, int destination, BluetoothWriter writer){
 		this.speed = speed;
 		this.state = state;
 		this.position = position;
 		this.destination = destination;
-		sender = out;
+		this.writer = writer;
 	}
 	
 	public boolean isForward(){
@@ -90,26 +97,14 @@ public class TrainInfo {
 	 * 发送程序运行命令
 	 */
 	public void start(){
-		try {
-			sender.writeInt(Command.PROGRAM_START);
-			sender.flush();
-		} catch (IOException e) {
-			System.err.println("ERROR-send program-start!");
-			e.printStackTrace();
-		}
+		writer.synWriteIntAndFlush(Command.PROGRAM_START, "send program-start!");
 	}
 	
 	/**
 	 * 发送火车停止命令
 	 */
 	public void stop() {
-		try {
-			sender.writeInt(Command.TRAIN_STOP);
-			sender.flush();
-		} catch (IOException e) {
-			System.err.println("ERROR-send train-stop!");
-			e.printStackTrace();
-		}
+		writer.synWriteIntAndFlush(Command.TRAIN_STOP, "send train-stop!");
 	}
 	/**
 	 * 发送前进命令
@@ -120,16 +115,9 @@ public class TrainInfo {
 		setDestination(dest);
 		setForward();
 		int cmd = Command.SPEED_MARK + getSpeed();
-		
 		System.err.println("forward " +  "], dest=" + dest+", cmd="+cmd);
-		try {
-			sender.writeInt(cmd);
-			sender.flush();
-		} catch (IOException e) {
-			System.err.println("ERROR-send train-forward!");			
-			e.printStackTrace();
-		}
 		
+		writer.synWriteIntAndFlush(cmd, "send train-forward!");
 	}
 	
 	/**
@@ -143,13 +131,8 @@ public class TrainInfo {
 		setBackward();
 		int cmd = Command.SPEED_MARK + getSpeed();
 		System.err.println("backward " +", dest=" + dest+", cmd="+(-cmd));
-		try {
-			sender.writeInt(-cmd);
-			sender.flush();
-		} catch (IOException e) {
-			System.err.println("ERROR-send train-forward!");			
-			e.printStackTrace();
-		}
+		
+		writer.synWriteIntAndFlush(-cmd, "send train-backward!");
 		
 	}
 	
@@ -180,27 +163,25 @@ public class TrainInfo {
 		setSpeed(speed);
 		int cmd = Command.SPEED_MARK + getSpeed();
 		cmd = (isForward() ? cmd : -cmd);
-		try{
-			sender.writeInt(cmd);
-			sender.flush();
-		}
-		catch(IOException e) {
-			System.err.println("ERROR-send train-change!");
-			e.printStackTrace();
-		}
+		
+		writer.synWriteIntAndFlush(cmd, "send train-change!");
 	}
 	
 	/**
 	 * 发送退出程序命令
 	 */
 	public void exit(){
-		try {
-			sender.writeInt(Command.EXIT);
-			sender.flush();
-		} catch (IOException e) {
-			System.err.println("ERROR-send train-exit!");
-			e.printStackTrace();
-		}
+		writer.synWriteIntAndFlush(Command.EXIT, "send train-exit");
+	}
+
+	//HeartDetector使用
+	@Override
+	public boolean isBeatFlag() {
+		return beatFlag;
+	}
+	@Override
+	public void setBeatFlag(boolean beatFlag) {
+		this.beatFlag = beatFlag;
 	}
 	
 }

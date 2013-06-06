@@ -27,17 +27,21 @@ public class CommandExecutor extends Thread {
 		return cmdList.remove(0);
 	}
 	
+	public synchronized boolean isEmpty(){
+		return cmdList.isEmpty();
+	}
+	
 	@Override
 	public void run() {
 		while(ca.isKeepOn()){
-			if(!cmdList.isEmpty()){
+			if(!isEmpty()){
 				Command cmd = removeCommand();
 				cmd.execute();
 			}
 			try {
 				Thread.sleep(peroid);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		LCD.drawString("exit CommandExecutor", 0, 0);

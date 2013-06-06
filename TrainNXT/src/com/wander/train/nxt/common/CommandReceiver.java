@@ -29,7 +29,9 @@ public class CommandReceiver extends Thread{
 			int cmd;
 			try {
 				cmd = in.readInt();
-				LCD.drawInt(cmd, 6, 5, 3);
+				if(cmd != Config.HEART_BEAT){
+					LCD.drawInt(cmd, 6, 5, 3);					
+				}
 				Command concreteCommand = cmdFactory.parseCommand(cmd);
 				cmdExecutor.addCommand(concreteCommand);
 			} catch (IOException e) {

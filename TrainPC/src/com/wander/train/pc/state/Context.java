@@ -1,10 +1,8 @@
 package com.wander.train.pc.state;
 
-import java.io.IOException;
-
 public interface Context {
 	
-	public void setState(State state) throws IOException;
+	public void setState(State state);
 	
 	public void resetDelay();
 	public void incDelay();

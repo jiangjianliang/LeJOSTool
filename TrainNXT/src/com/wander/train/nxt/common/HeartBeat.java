@@ -23,8 +23,7 @@ public class HeartBeat extends Thread {
 	@Override
 	public void run() {
 		while (ca.isKeepOn()) {
-			writer.writeIntAndFlush(Config.HEARTBEAT);
-
+			writer.synWriteIntAndFlush(Config.HEART_BEAT, "write heartbeat");
 			try {
 				sleep(period);
 			} catch (InterruptedException e) {

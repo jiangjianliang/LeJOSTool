@@ -12,10 +12,10 @@ public abstract class State {
 	 * 状态机处理函数
 	 * @throws IOException
 	 */
-	public abstract void handle() throws IOException;
+	public abstract void handle();
 	/**
 	 * 进入本状态时的处理
 	 * @throws IOException
 	 */
-	public abstract void doExtra() throws IOException;
+	public abstract void doExtra();
 }

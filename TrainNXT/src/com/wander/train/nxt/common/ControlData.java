@@ -52,4 +52,14 @@ public class ControlData {
 		this.color = color;
 	}
 	
+	private  boolean beatFlag = false;
+	
+	public synchronized  void setBeatFlag(boolean beatFlag){
+		this.beatFlag = beatFlag;
+	}
+	
+	public synchronized  boolean isBeatFlag(){
+		return beatFlag;
+	}
+	
 }

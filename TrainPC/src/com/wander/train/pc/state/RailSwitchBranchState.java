@@ -1,7 +1,5 @@
 package com.wander.train.pc.state;
 
-import java.io.IOException;
-
 public class RailSwitchBranchState extends State{
 
 	public RailSwitchBranchState(Context context) {
@@ -9,7 +7,7 @@ public class RailSwitchBranchState extends State{
 	}
 
 	@Override
-	public void handle() throws IOException {
+	public void handle() {
 		context.incDelay();
 		
 		if (context.isExpired()) {
@@ -18,7 +16,7 @@ public class RailSwitchBranchState extends State{
 	}
 
 	@Override
-	public void doExtra() throws IOException {
+	public void doExtra() {
 		context.resetDelay();
 		// 发出换轨道命令
 		context.commandSwitchMain(false);

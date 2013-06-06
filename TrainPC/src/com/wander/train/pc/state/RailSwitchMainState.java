@@ -1,7 +1,5 @@
 package com.wander.train.pc.state;
 
-import java.io.IOException;
-
 public class RailSwitchMainState extends State {
 	
 	
@@ -10,14 +8,14 @@ public class RailSwitchMainState extends State {
 	}
 
 	@Override
-	public void handle() throws IOException {
+	public void handle() {
 		// 转向InProgress
 		context.setState(new InProgressState(context));
 
 	}
 
 	@Override
-	public void doExtra() throws IOException {
+	public void doExtra() {
 		//切换轨道
 		context.commandSwitchMain(true);
 	}

@@ -1,8 +1,14 @@
-package com.wander.train.pc;
+package com.wander.train.pc.common;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import com.wander.train.pc.station.StationInfo;
+import com.wander.train.pc.station.StationReader;
+import com.wander.train.pc.train.HeartBeat;
+import com.wander.train.pc.train.TrainInfo;
+import com.wander.train.pc.train.TrainReader;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
@@ -39,6 +45,8 @@ public class MonitorModel implements Config{
 	private DataOutputStream[] stationSender = new DataOutputStream[STATION_NUM];
 	private DataInputStream[] stationReceiver = new DataInputStream[STATION_NUM];
 	
+	private BluetoothReader[] stationReader = new BluetoothReader[STATION_NUM];
+	private BluetoothWriter[] stationWriter = new BluetoothWriter[STATION_NUM];
 
 	/*
 	 * 假定同方向上有TrainInfo[0]早于TrainInfo[1]， 也就是TrainInfo[0]会更早到达它们的共同站点
@@ -48,9 +56,11 @@ public class MonitorModel implements Config{
 	private DataOutputStream[] trainSender = new DataOutputStream[TRAIN_NUM];
 	private DataInputStream[] trainReceiver = new DataInputStream[TRAIN_NUM];
 	
+	private BluetoothReader[] trainReader = new BluetoothReader[TRAIN_NUM];
+	private BluetoothWriter[] trainWriter = new BluetoothWriter[TRAIN_NUM];
+	
 	public MonitorModel() {		
 		connect();
-		init();
 	}
 	/**
 	 * 连接设备
@@ -79,7 +89,6 @@ public class MonitorModel implements Config{
 				}
 
 			} catch (NXTCommException e) {
-				//e.printStackTrace();
 				System.err.println("error while connecting to Station.");
 				System.exit(-1);
 			}
@@ -90,8 +99,16 @@ public class MonitorModel implements Config{
 			}
 			
 			for (int i = 0; i < stationList.length; i++) {
-				stationSender[i] = new DataOutputStream(stationNxtList[i].getOutputStream());
-				stationReceiver[i] = new DataInputStream(stationNxtList[i].getInputStream());
+				stationWriter[i] = new BluetoothWriter(new DataOutputStream(stationNxtList[i].getOutputStream()));
+				if(i == SWITCH_INDEX){
+					stationList[i] = new StationInfo(this, trainList, true, 0, stationWriter[i]);
+				}
+				else{
+					stationList[i] = new StationInfo(this, trainList, false, 1, stationWriter[i]);
+				}
+				stationReader[i] = new StationReader(new DataInputStream(stationNxtList[i].getInputStream()), stationList[i]);
+				stationReader[i].start();
+				new HeartDetector(stationList[i], Config.HeartDetectorPeriod).start();
 			}
 			
 			
@@ -116,45 +133,20 @@ public class MonitorModel implements Config{
 			}
 			
 			for(int i=0; i< trainList.length; i++){
-				trainSender[i] = new DataOutputStream(trainNxtList[i].getOutputStream());
-				trainReceiver[i] = new DataInputStream(trainNxtList[i].getInputStream());
+				trainWriter[i] = new BluetoothWriter(new DataOutputStream(trainNxtList[i].getOutputStream()));
+				trainList[i] = new TrainInfo(7,0, 0, 1, trainWriter[i]);
+				trainReader[i] = new TrainReader(new DataInputStream(trainNxtList[i].getInputStream()), trainList[i]);
+				trainReader[i].start();
+				new HeartBeat(trainWriter[i], 500).start();
+				new HeartDetector(trainList[i], Config.HeartDetectorPeriod).start();
 			}
-		}
-	}
-	/**
-	 * 初始化
-	 */
-	private void init() {
-		// initialize train
-		
-		for(int i=0; i < trainList.length; i++){
-			trainList[i] = new TrainInfo(7,0, 0, 1, trainSender[i]);
-		}
-
-		//trainList[0] = new TrainInfo(5, 0, 0,1);
-		//trainList[1] = new TrainInfo(5, 0, 2,0);
-		
-		// initialize station
-		for(int i=0; i < stationList.length; i++){
-			//TODO 以后火车数量增加需要修改
-			if(i == SWITCH_INDEX){
-				stationList[i] = new StationInfo(this, trainList, true, 0, stationSender[i]);
-			}
-			else{
-				stationList[i] = new StationInfo(this, trainList, false, 1, stationSender[i]);
-			}
-			//TODO 以后再管这个
-			new HeartDetector(stationList[i], Config.HeartDetectorPeriod).start();
-			new BluetoothReader(stationReceiver[i], stationList[i]).start();
-			//new UpdateDistanceThread(stationReceiver[i], stationList[i]).start();
 		}
 	}
 	
 	/**
 	 * 推动状态机
-	 * @throws IOException 
 	 */
-	public void push() throws IOException{
+	public void push(){
 		for (int i = 0; i < stationList.length; i++) {
 			stationList[i].push();
 		}
@@ -242,12 +234,16 @@ public class MonitorModel implements Config{
 	}
 
 	public int getTrainPos(int i) {
-		//if(i >= trainList.length)
+		if(i >= trainList.length){
+			return 0;
+		}
 		return trainList[i].getPosition();
 	}
 
 	public int getTrainSpeed(int i) {
-		//if(i >= trainList.length)
+		if(i >= trainList.length){
+			return 0;
+		}
 		return trainList[i].getSpeed();
 	}
 	/**

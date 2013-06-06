@@ -23,6 +23,6 @@ public interface Config {
 	public final static int HeartBeatPeriod = 500;
 	
 	//心跳标记
-	public final static int HEARTBEAT = 99999;
+	public final static int HEART_BEAT = 9999;
 	
 }

@@ -1,4 +1,4 @@
-package com.wander.train.pc;
+package com.wander.train.pc.common;
 
 /**
  * 命令接口

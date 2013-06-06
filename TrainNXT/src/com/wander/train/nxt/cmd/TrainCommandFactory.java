@@ -2,12 +2,10 @@ package com.wander.train.nxt.cmd;
 
 import com.wander.train.nxt.cmd.station.StartCommand;
 import com.wander.train.nxt.cmd.train.ChangeSpeedCommand;
-import com.wander.train.nxt.cmd.train.TrainCommand;
 import com.wander.train.nxt.cmd.train.TrainExitCommand;
 import com.wander.train.nxt.cmd.train.TrainStopCommand;
 import com.wander.train.nxt.common.Config;
 import com.wander.train.nxt.common.ControlData;
-
 import lejos.nxt.LCD;
 
 /**
@@ -16,7 +14,7 @@ import lejos.nxt.LCD;
  * @author wander
  * 
  */
-public class TrainCommandFactory implements CommandFactory{
+public class TrainCommandFactory implements CommandFactory {
 
 	private static TrainCommandFactory instance = new TrainCommandFactory();
 
@@ -26,8 +24,7 @@ public class TrainCommandFactory implements CommandFactory{
 
 	}
 
-	public static TrainCommandFactory getInstance(
-			ControlData ca) {
+	public static TrainCommandFactory getInstance(ControlData ca) {
 		instance.setCa(ca);
 		return instance;
 	}
@@ -55,17 +52,23 @@ public class TrainCommandFactory implements CommandFactory{
 			result = TrainStopCommand.getInstance();
 			break;
 		default:
-			boolean dir = cmd > 0; // true : forward; false : backward
-			cmd = Math.abs(cmd);
-			int speed = cmd % Command.SPEED_MARK % Command.TrainSpeedCount;
-			int newSpeed;
-			if (dir) {
-				newSpeed = speed;
+			if (cmd == Config.HEART_BEAT) {
+				ca.setBeatFlag(true);
+				result = NullCommand.getInstance();
 			} else {
-				newSpeed = -speed;
+				boolean dir = cmd > 0; // true : forward; false : backward
+				cmd = Math.abs(cmd);
+				int speed = cmd % Command.SPEED_MARK % Command.TrainSpeedCount;
+				int newSpeed;
+				if (dir) {
+					newSpeed = speed;
+				} else {
+					newSpeed = -speed;
+				}
+				LCD.drawInt(newSpeed, 0, 5);
+				result = ChangeSpeedCommand.getInstance(newSpeed);
 			}
-			LCD.drawInt(newSpeed, 0, 5);
-			result = ChangeSpeedCommand.getInstance(newSpeed);
+
 		}
 		return result;
 	}

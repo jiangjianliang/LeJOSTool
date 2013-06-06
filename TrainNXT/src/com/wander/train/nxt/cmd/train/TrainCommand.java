@@ -3,7 +3,6 @@ package com.wander.train.nxt.cmd.train;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTMotor;
 import com.wander.train.nxt.cmd.Command;
-import com.wander.train.nxt.common.Config;
 
 public abstract class TrainCommand implements Command {
 	// 预先设定使用A端口
