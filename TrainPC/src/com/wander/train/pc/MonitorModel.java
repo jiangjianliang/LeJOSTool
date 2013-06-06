@@ -144,7 +144,9 @@ public class MonitorModel implements Config{
 				stationList[i] = new StationInfo(this, trainList, false, 1, stationSender[i]);
 			}
 			//TODO 以后再管这个
-			new UpdateDistanceThread(stationReceiver[i], stationList[i]).start();
+			new HeartDetector(stationList[i], Config.HeartDetectorPeriod).start();
+			new BluetoothReader(stationReceiver[i], stationList[i]).start();
+			//new UpdateDistanceThread(stationReceiver[i], stationList[i]).start();
 		}
 	}
 	

@@ -58,6 +58,11 @@ public class StationInfo implements Context{
 	private DataOutputStream sender;
 	
 	/**
+	 * 心跳标记
+	 */
+	private boolean beatFlag = false;
+	
+	/**
 	 * 延迟
 	 */
 	private int delay = 0;
@@ -178,29 +183,29 @@ public class StationInfo implements Context{
 	public boolean updateColor(){
 		//System.err.println("color is "+ color);
 		//根据color返回是哪一辆火车进站了
-		if(isFirst(color)){
-			which = 0;
+		int result = chooseTrain(color);
+		if(result == -1){
+			return false;
+		}
+		else{
+			which = result;
 			return true;
 		}
-		else if(isSecond(color)){
-			which = 1;
-			return true;
-		}
-		return false;
-	}
-	//TODO 需要根据颜色来识别
-	private boolean isFirst(int color){
-		if(color == 3){
-			return true;			
-		}
-		return false;
 	}
 	
-	private boolean isSecond(int color){
-		if(color == 0){
-			return true;
+	private int chooseTrain(int color){
+		int i = 0;
+		for(; i < Config.TrainColor.length; i++){
+			if(Config.TrainColor[i] == color){
+				break;
+			}
 		}
-		return false;
+		if(i == Config.TrainColor.length){
+			return -1;
+		}
+		else{
+			return i;
+		}
 	}
 
 	/**
@@ -282,6 +287,16 @@ public class StationInfo implements Context{
 	public void commandSwitchMain(boolean flag){
 		//System.err.println("in commandSwitch + "+ flag);
 		mm.commandStationSwitch(flag);
+	}
+
+	//HeartDetector检测使用
+	
+	public synchronized boolean isBeatFlag() {
+		return beatFlag;
+	}
+
+	public synchronized void setBeatFlag(boolean beatFlag) {
+		this.beatFlag = beatFlag;
 	}
 	
 }

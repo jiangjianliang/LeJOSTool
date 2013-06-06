@@ -1,6 +1,5 @@
 package com.wander.train.nxt.cmd.train;
 
-import com.wander.train.nxt.cmd.Command;
 import com.wander.train.nxt.common.ControlData;
 
 

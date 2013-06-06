@@ -1,21 +1,21 @@
 package com.wander.train.nxt.station;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-
+import com.wander.train.nxt.common.BluetoothWriter;
 import com.wander.train.nxt.common.ControlData;
 
 import lejos.nxt.LCD;
 
 public class SensorReporter extends Thread {
 
-	private DataOutputStream out;
+	private BluetoothWriter writer;
 	private ControlData ca;
+	private int period = 200;
 
-	public SensorReporter(DataOutputStream out,
-			ControlData ca) {
-		this.out = out;
+	public SensorReporter(BluetoothWriter writer,
+			ControlData ca, int period) {
+		this.writer = writer;
 		this.ca = ca;
+		this.period = period;
 	}
 
 	@Override
@@ -24,17 +24,10 @@ public class SensorReporter extends Thread {
 			if (ca.isStart()) {
 
 				int result = ca.getDistance()*100 + ca.getColor();
-				try {
-					out.writeInt(result);
-					out.flush();
-
-				} catch (IOException e1) {
-					LCD.drawString("ERROR WRITE!", 0, 3);
-					// e1.printStackTrace();
-				}
+				writer.writeIntAndFlush(result);
 			}
 			try {
-				Thread.sleep(200);
+				Thread.sleep(period);
 			} catch (InterruptedException e) {
 				// e.printStackTrace();
 			}

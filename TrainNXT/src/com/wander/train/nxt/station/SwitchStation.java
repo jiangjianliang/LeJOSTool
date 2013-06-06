@@ -5,10 +5,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import com.wander.train.nxt.cmd.StationCommandFactory;
+import com.wander.train.nxt.common.BluetoothWriter;
 import com.wander.train.nxt.common.CommandExecutor;
 import com.wander.train.nxt.common.CommandReceiver;
 import com.wander.train.nxt.common.Config;
 import com.wander.train.nxt.common.ControlData;
+import com.wander.train.nxt.common.HeartBeat;
 
 import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
@@ -40,29 +42,34 @@ public class SwitchStation implements Config {
 		UltrasonicSensor sonic = new UltrasonicSensor(UltrasonicPort);
 		ColorSensor color = new ColorSensor(ColorPort);
 		
-		ControlData ca = new ControlData();
-		StationCommandFactory cmdFactory = StationCommandFactory.getInstance(ca);
+		ControlData cdata = new ControlData();
+		StationCommandFactory cmdFactory = StationCommandFactory.getInstance(cdata);
+		BluetoothWriter writer = BluetoothWriter.getInstance(pcDout);
 
-		CommandExecutor cmdExecutor = new CommandExecutor(ca);
+		CommandExecutor cmdExecutor = new CommandExecutor(cdata, Config.CommandExecutorPeriod);
 		cmdExecutor.start();
 
-		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, ca,
+		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, cdata,
 				cmdFactory, cmdExecutor);
 		cmdReceiver.start();
 		
-		UltrasonicDetector ultrasonicDector = new UltrasonicDetector(sonic, ca);
+		
+		UltrasonicDetector ultrasonicDector = new UltrasonicDetector(sonic, cdata);
 		ultrasonicDector.start();
 		
-		ColorDetector colorDetector = new ColorDetector(color, ca);
+		ColorDetector colorDetector = new ColorDetector(color, cdata);
 		colorDetector.start();
 		
-		SensorReporter report = new SensorReporter(pcDout, ca);
+		SensorReporter report = new SensorReporter(writer, cdata, Config.SensorReporterPeriod);
 		report.start();
 		
-		while (!Button.ESCAPE.isDown() && ca.isKeepOn()) {
+		HeartBeat heart = HeartBeat.getInstance(writer, cdata, Config.HeartBeatPeriod);
+		heart.start();
+		
+		while (!Button.ESCAPE.isDown() && cdata.isKeepOn()) {
 
 		}
-		ca.setKeepOn(false);
+		cdata.setKeepOn(false);
 
 		try {
 			pcDin.close();

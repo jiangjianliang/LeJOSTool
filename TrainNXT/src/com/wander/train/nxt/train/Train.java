@@ -5,10 +5,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import com.wander.train.nxt.cmd.TrainCommandFactory;
+import com.wander.train.nxt.common.BluetoothWriter;
 import com.wander.train.nxt.common.CommandExecutor;
 import com.wander.train.nxt.common.CommandReceiver;
 import com.wander.train.nxt.common.Config;
 import com.wander.train.nxt.common.ControlData;
+import com.wander.train.nxt.common.HeartBeat;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
@@ -33,20 +35,24 @@ public class Train implements Config {
 		
 		LCD.drawString("cmd:", 0, 2);
 
-		ControlData ca = new ControlData();
-		TrainCommandFactory cmdFactory = TrainCommandFactory.getInstance(ca);
+		ControlData cdata = new ControlData();
+		TrainCommandFactory cmdFactory = TrainCommandFactory.getInstance(cdata);
+		BluetoothWriter writer = BluetoothWriter.getInstance(pcDout);
 
-		CommandExecutor cmdExecutor = new CommandExecutor(ca);
+		CommandExecutor cmdExecutor = new CommandExecutor(cdata, Config.CommandExecutorPeriod);
 		cmdExecutor.start();
 
-		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, ca,
+		CommandReceiver cmdReceiver = new CommandReceiver(pcDin, cdata,
 				cmdFactory, cmdExecutor);
 		cmdReceiver.start();
 		
-		while (!Button.ESCAPE.isDown() && ca.isKeepOn()) {
+		HeartBeat heart = HeartBeat.getInstance(writer, cdata, Config.HeartBeatPeriod);
+		heart.start();
+		
+		while (!Button.ESCAPE.isDown() && cdata.isKeepOn()) {
 
 		}
-		ca.setKeepOn(false);
+		cdata.setKeepOn(false);
 
 		try {
 			pcDin.close();
@@ -55,7 +61,7 @@ public class Train implements Config {
 		} catch (IOException e) {
 			LCD.drawString("CLOSE ERROR.", 0, 7);
 		}
-		//LCD.clear();
+		
 		LCD.drawString("good bye", 5, 4);
 		Button.waitForAnyPress();
 

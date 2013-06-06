@@ -8,12 +8,14 @@ import lejos.nxt.LCD;
 import com.wander.train.nxt.cmd.Command;
 
 public class CommandExecutor extends Thread {
-	
+		
 	private ControlData ca;
 	private List<Command> cmdList = new ArrayList<Command>();
+	private int peroid = 100;
 	
-	public CommandExecutor(ControlData ca){
+	public CommandExecutor(ControlData ca, int period){
 		this.ca = ca;
+		this.peroid = period;
 	}
 	
 	
@@ -33,7 +35,7 @@ public class CommandExecutor extends Thread {
 				cmd.execute();
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(peroid);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

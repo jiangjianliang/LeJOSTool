@@ -2,8 +2,10 @@ package com.wander.train.nxt.cmd;
 
 import com.wander.train.nxt.cmd.station.StartCommand;
 import com.wander.train.nxt.cmd.train.ChangeSpeedCommand;
+import com.wander.train.nxt.cmd.train.TrainCommand;
 import com.wander.train.nxt.cmd.train.TrainExitCommand;
 import com.wander.train.nxt.cmd.train.TrainStopCommand;
+import com.wander.train.nxt.common.Config;
 import com.wander.train.nxt.common.ControlData;
 
 import lejos.nxt.LCD;
@@ -55,7 +57,7 @@ public class TrainCommandFactory implements CommandFactory{
 		default:
 			boolean dir = cmd > 0; // true : forward; false : backward
 			cmd = Math.abs(cmd);
-			int speed = cmd % Command.SPEED_MARK % 11;//TODO 最大速度为90%
+			int speed = cmd % Command.SPEED_MARK % Command.TrainSpeedCount;
 			int newSpeed;
 			if (dir) {
 				newSpeed = speed;

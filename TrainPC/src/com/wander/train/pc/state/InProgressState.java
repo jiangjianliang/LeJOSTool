@@ -12,9 +12,14 @@ public class InProgressState extends State {
 	@Override
 	public void handle() throws IOException {
 		boolean result = context.updateColor();
-		//TODO result的值需要重新规划一下
-		if(result ){
+		if(result){
 			context.setState(new TrainEnterState(context));
+		}
+		else{
+			int disType = context.updateDistance();
+			if(disType == 1){
+				//TODO 详细考虑
+			}
 		}
 		
 	}
