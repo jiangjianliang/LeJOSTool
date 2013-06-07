@@ -3,8 +3,6 @@ package com.wander.train.nxt.train;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-
 import com.wander.train.nxt.cmd.Command;
 import com.wander.train.nxt.cmd.TrainCommandFactory;
 import com.wander.train.nxt.cmd.train.TrainStopCommand;
@@ -19,7 +17,6 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
-import lejos.nxt.comm.RConsole;
 
 //import lejos.nxt.comm.USB;
 

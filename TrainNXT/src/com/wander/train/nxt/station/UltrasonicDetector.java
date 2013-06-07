@@ -20,6 +20,7 @@ public class UltrasonicDetector extends Thread {
 		while (ca.isKeepOn()) {
 			if (ca.isStart()) {
 				int dis = sonic.getDistance();
+				LCD.drawInt(dis, 9, 1);
 				ca.setDistance(dis);
 			}
 			try {
@@ -28,6 +29,6 @@ public class UltrasonicDetector extends Thread {
 				// e.printStackTrace();
 			}
 		}
-		LCD.drawString("exit UltrasonicDector", 0, 1);
+		LCD.drawString("exit UltrasonicDector", 0, 2);
 	}
 }

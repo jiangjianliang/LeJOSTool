@@ -2,7 +2,7 @@ package com.wander.train.pc.common;
 
 public interface Config {
 		//站点数量
-		public static int STATION_NUM = 0;
+		public static int STATION_NUM = 2;
 		//火车对应的起始NXT编号
 		public static int TRAIN_NXT_START = 2;
 		//火车数量

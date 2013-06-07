@@ -22,7 +22,6 @@ public class SensorReporter extends Thread {
 	public void run() {
 		while (ca.isKeepOn()) {
 			if (ca.isStart()) {
-
 				int result = ca.getDistance()*100 + ca.getColor();
 				writer.synWriteIntAndFlush(result, "write SensorInfo");
 			}

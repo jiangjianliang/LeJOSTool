@@ -15,8 +15,8 @@ public interface Config {
 	public final static I2CPort IrLinkPort = SensorPort.S1;
 	@Deprecated
 	public final static ADSensorPort TouchPort = SensorPort.S3;
-	public final static SensorPort ColorPort = SensorPort.S3;
-	public final static I2CPort UltrasonicPort = SensorPort.S4;
+	public final static SensorPort ColorPort = SensorPort.S4;
+	public final static I2CPort UltrasonicPort = SensorPort.S1;
 	//睡眠周期
 	public final static int CommandExecutorPeriod = 100;
 	public final static int SensorReporterPeriod  = 200;
