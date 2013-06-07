@@ -53,10 +53,10 @@ public class NormalStation implements Config {
 				cmdFactory, cmdExecutor);
 		cmdReceiver.start();
 		
-		UltrasonicDetector ultrasonicDector = new UltrasonicDetector(sonic, cdata);
+		UltrasonicDetector ultrasonicDector = new UltrasonicDetector(sonic);
 		ultrasonicDector.start();
 		
-		ColorDetector colorDetector = new ColorDetector(color, cdata);
+		ColorDetector colorDetector = new ColorDetector(color);
 		colorDetector.start();
 		
 		SensorReporter report = new SensorReporter(writer, cdata, Config.SensorReporterPeriod);

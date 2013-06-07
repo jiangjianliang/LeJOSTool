@@ -9,6 +9,7 @@ public class HeartDetector extends Thread {
 
 	public HeartDetector(ControlData ca) {
 		this.ca = ca;
+		setDaemon(true);
 	}
 
 	@Override
@@ -20,8 +21,8 @@ public class HeartDetector extends Thread {
 				// e.printStackTrace();
 			}
 
-			if (ca.isBeatFlag()) {
-				ca.setBeatFlag(false);
+			if (HeartData.isBeatFlag()) {
+				HeartData.setBeatFlag(false);
 			} else {
 				LCD.drawString("heart fail", 0, 6);
 			}

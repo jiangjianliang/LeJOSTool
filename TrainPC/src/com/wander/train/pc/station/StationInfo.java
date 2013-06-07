@@ -261,4 +261,20 @@ public class StationInfo implements Context,HeartDetectable {
 		this.beatFlag = beatFlag;
 	}
 
+	@Override
+	public void initIterator() {
+		which = -1;
+	}
+
+	@Override
+	public boolean next() {
+		if(which == Config.TRAIN_NUM){			
+			return false;
+		}
+		else{
+			which++;
+			return true;
+		}
+	}
+
 }

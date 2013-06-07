@@ -6,6 +6,8 @@ import com.wander.train.nxt.cmd.train.TrainExitCommand;
 import com.wander.train.nxt.cmd.train.TrainStopCommand;
 import com.wander.train.nxt.common.Config;
 import com.wander.train.nxt.common.ControlData;
+import com.wander.train.nxt.train.HeartData;
+
 import lejos.nxt.LCD;
 
 /**
@@ -53,7 +55,7 @@ public class TrainCommandFactory implements CommandFactory {
 			break;
 		default:
 			if (cmd == Config.HEART_BEAT) {
-				ca.setBeatFlag(true);
+				HeartData.setBeatFlag(true);
 				result = NullCommand.getInstance();
 			} else {
 				boolean dir = cmd > 0; // true : forward; false : backward

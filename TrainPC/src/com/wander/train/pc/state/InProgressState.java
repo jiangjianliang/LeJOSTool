@@ -17,6 +17,7 @@ public class InProgressState extends State {
 			int disType = context.updateDistance();
 			if(disType == 1){
 				//TODO 详细考虑
+				context.setState(new SensorErrorState(context));
 			}
 		}
 		

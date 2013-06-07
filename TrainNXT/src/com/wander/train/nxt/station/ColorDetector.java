@@ -1,7 +1,5 @@
 package com.wander.train.nxt.station;
 
-import com.wander.train.nxt.common.ControlData;
-
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
 import lejos.robotics.Color;
@@ -9,24 +7,20 @@ import lejos.robotics.Color;
 public class ColorDetector extends Thread {
 
 	private ColorSensor color;
-	private ControlData ca;
-
-	public ColorDetector(ColorSensor color, ControlData ca) {
+	public ColorDetector(ColorSensor color) {
 		this.color = color;
-		this.ca = ca;
+		setDaemon(true);
 		color.setFloodlight(Color.NONE);
-		//color.setFloodlight(Color.WHITE);
-		//color.setFloodlight(true);
+		// color.setFloodlight(Color.WHITE);
+		// color.setFloodlight(true);
 	}
 
 	@Override
 	public void run() {
-		while (ca.isKeepOn()) {
-			if (ca.isStart()) {
-				int colorIndex = color.getColor().getColor();
-				LCD.drawInt(colorIndex, 2, 9, 2);
-				ca.setColor(colorIndex);
-			}
+		while (true) {
+			int colorIndex = color.getColor().getColor();
+			LCD.drawInt(colorIndex, 2, 9, 2);
+			SensorData.setColor(colorIndex);
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
@@ -34,6 +28,6 @@ public class ColorDetector extends Thread {
 			}
 		}
 
-		LCD.drawString("exit ColorDetector", 0, 3);
+		// LCD.drawString("exit ColorDetector", 0, 3);
 	}
 }

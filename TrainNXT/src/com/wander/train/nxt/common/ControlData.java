@@ -11,15 +11,6 @@ public class ControlData {
 	 */
 	private boolean start = false;
 	
-	/**
-	 * 距离信息
-	 */
-	private int distance = 255;
-	/**
-	 * 颜色信息
-	 */
-	private int color = 7;
-	
 	public synchronized void setKeepOn(boolean keepOn){
 		this.keepOn = keepOn;
 	}
@@ -36,30 +27,5 @@ public class ControlData {
 		this.start = start;
 	}
 
-	public synchronized int getDistance() {
-		return distance;
-	}
-
-	public synchronized void setDistance(int distance) {
-		this.distance = distance;
-	}
-
-	public synchronized int getColor() {
-		return color;
-	}
-
-	public synchronized void setColor(int color) {
-		this.color = color;
-	}
-	
-	private  boolean beatFlag = false;
-	
-	public synchronized  void setBeatFlag(boolean beatFlag){
-		this.beatFlag = beatFlag;
-	}
-	
-	public synchronized  boolean isBeatFlag(){
-		return beatFlag;
-	}
 	
 }

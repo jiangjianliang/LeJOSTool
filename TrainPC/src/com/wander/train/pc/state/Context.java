@@ -8,6 +8,10 @@ public interface Context {
 	public void incDelay();
 	public boolean isExpired();
 	
+	
+	public void initIterator();
+	public boolean next();
+	
 	/**
 	 * 更新距离
 	 * @return
