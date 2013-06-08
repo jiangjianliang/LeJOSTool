@@ -178,6 +178,7 @@ public class StationInfo implements Context,HeartDetectable {
 		if (result == -1) {
 			return false;
 		} else {
+			System.err.println("choose "+ result);
 			which = result;
 			return true;
 		}
@@ -262,12 +263,12 @@ public class StationInfo implements Context,HeartDetectable {
 	}
 
 	@Override
-	public void initIterator() {
+	public void itrInit() {
 		which = -1;
 	}
 
 	@Override
-	public boolean next() {
+	public boolean itrNext() {
 		if(which == Config.TRAIN_NUM){			
 			return false;
 		}

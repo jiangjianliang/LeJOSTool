@@ -79,7 +79,6 @@ public class NormalStation implements Config {
 		}
 		//LCD.clear();
 		LCD.drawString("good bye", 5, 4);
-		Button.waitForAnyPress();
-
+		//Button.waitForAnyPress();
 	}
 }

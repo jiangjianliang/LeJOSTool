@@ -9,8 +9,8 @@ public interface Context {
 	public boolean isExpired();
 	
 	
-	public void initIterator();
-	public boolean next();
+	public void itrInit();
+	public boolean itrNext();
 	
 	/**
 	 * 更新距离

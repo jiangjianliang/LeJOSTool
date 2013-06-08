@@ -13,15 +13,21 @@ public class SensorErrorState extends State {
 	@Override
 	public void handle() {
 		//TODO 转向哪一个状态？
-		System.err.println("in state SensorErrorState");
+		//System.err.println("in state SensorErrorState");
 	}
 
 	@Override
 	public void doExtra() {
 		//TODO 让所有火车都停止？
-		while(true){
+		context.itrInit();
+		while(context.itrNext()){
 			context.commandStop();			
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "SensorErrorState";
 	}
 
 }

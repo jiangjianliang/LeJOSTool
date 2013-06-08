@@ -134,7 +134,7 @@ public class MonitorModel implements Config{
 			
 			for(int i=0; i< trainList.length; i++){
 				trainWriter[i] = new BluetoothWriter(new DataOutputStream(trainNxtList[i].getOutputStream()));
-				trainList[i] = new TrainInfo(7,0, 0, 1, trainWriter[i]);
+				trainList[i] = new TrainInfo(9,0, 0, 1, trainWriter[i]);
 				trainReader[i] = new TrainReader(new DataInputStream(trainNxtList[i].getInputStream()), trainList[i]);
 				trainReader[i].start();
 				new HeartBeat(trainWriter[i], 500).start();
@@ -181,7 +181,7 @@ public class MonitorModel implements Config{
 		if(which >= trainList.length){
 			return;
 		}
-		trainList[which].setSpeed(10);
+		//TODO trainList[which].setSpeed(10);
 		trainList[which].forward(dest);
 	}
 
@@ -189,7 +189,7 @@ public class MonitorModel implements Config{
 		if(which >= trainList.length){
 			return;
 		}
-		trainList[which].setSpeed(10);
+		//TODO trainList[which].setSpeed(10);
 		trainList[which].backward(dest);
 	}
 	

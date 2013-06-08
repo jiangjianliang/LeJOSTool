@@ -71,7 +71,6 @@ public class Train implements Config {
 		Command concreteCommand = TrainStopCommand.getInstance();
 		concreteCommand.execute();
 		
-		Button.waitForAnyPress();
-
+		//Button.waitForAnyPress();
 	}
 }

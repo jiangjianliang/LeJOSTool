@@ -141,7 +141,7 @@ public class TrainInfo implements HeartDetectable{
 	 * @param i
 	 */
 	public void speedUp(int i){
-		int newSpeed = getSpeed()+1;
+		int newSpeed = getSpeed()+i;
 		if(newSpeed > 10){
 			newSpeed = 10;
 		}
@@ -152,8 +152,8 @@ public class TrainInfo implements HeartDetectable{
 	 */
 	public void slowDown(int i){
 		int newSpeed = getSpeed()-i;
-		if(newSpeed < 5){
-			newSpeed = 5;
+		if(newSpeed < 1){
+			newSpeed = 1;
 		}
 		changeSpeed(newSpeed);
 	}

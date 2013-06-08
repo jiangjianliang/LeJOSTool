@@ -27,10 +27,12 @@ public class InProgressState extends State {
 	public void doExtra() {
 		//TODO 不同的速度
 		if(context.isSwitch()){
-			context.commandSlowDown(2);
+			//context.commandSlowDown(2);
+			context.commandSpeedUp(2);
 		}
 		else{
-			context.commandSlowDown(1);
+			context.commandSpeedUp(3);
+			//context.commandSlowDown(1);
 		}
 	}
 

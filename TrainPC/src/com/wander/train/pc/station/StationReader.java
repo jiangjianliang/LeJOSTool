@@ -22,6 +22,7 @@ public class StationReader extends BluetoothReader {
 	protected void receiveAndAct() {
 		try {
 			int result = in.readInt();
+			//System.err.println("reading from station");
 			if(result == Config.HEART_BEAT){
 				nxt.setBeatFlag(true);
 			}
