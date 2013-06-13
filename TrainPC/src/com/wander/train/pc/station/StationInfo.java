@@ -62,7 +62,8 @@ public class StationInfo implements Context,HeartDetectable {
 	 * 延迟
 	 */
 	private int delay = 0;
-	private static int DELAY_COUNT = 18;
+	private int DelayThresh = 18;
+	
 	/**
 	 * 保持状态机的变量
 	 */
@@ -137,8 +138,9 @@ public class StationInfo implements Context,HeartDetectable {
 	}
 
 	@Override
-	public void resetDelay() {
+	public void resetDelay(int initDelay) {
 		delay = 0;
+		DelayThresh = initDelay;
 	}
 
 	@Override
@@ -148,7 +150,7 @@ public class StationInfo implements Context,HeartDetectable {
 
 	@Override
 	public boolean isExpired() {
-		return delay > DELAY_COUNT;
+		return delay > DelayThresh;
 	}
 
 	@Override
@@ -175,6 +177,7 @@ public class StationInfo implements Context,HeartDetectable {
 		// System.err.println("color is "+ color);
 		// 根据color返回是哪一辆火车进站了
 		int result = chooseTrain(color);
+		
 		if (result == -1) {
 			return false;
 		} else {
@@ -194,6 +197,7 @@ public class StationInfo implements Context,HeartDetectable {
 		if (i == Config.TrainColor.length) {
 			return -1;
 		} else {
+			System.err.println(color);
 			return i;
 		}
 	}
@@ -211,11 +215,15 @@ public class StationInfo implements Context,HeartDetectable {
 	public void exit() {
 		writer.writeIntAndFlush(Command.EXIT, "send station-exit!");
 	}
-
+	/**
+	 * 发送换轨道命令
+	 */
 	public void switchMain() {
 		writer.writeIntAndFlush(Command.SWITCH_MAIN, "send station-switchmain!");
 	}
-
+	/**
+	 * 发送换轨道命令
+	 */
 	public void switchBranch() {
 		writer.writeIntAndFlush(Command.SWITCH_BRANCH, "send station-switchbranch!");		
 	}

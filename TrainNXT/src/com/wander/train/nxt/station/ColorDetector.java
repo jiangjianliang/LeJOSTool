@@ -5,7 +5,9 @@ import lejos.nxt.LCD;
 import lejos.robotics.Color;
 
 public class ColorDetector extends Thread {
-
+	
+	private boolean flag = false;
+	
 	private ColorSensor color;
 	public ColorDetector(ColorSensor color) {
 		this.color = color;
@@ -20,14 +22,29 @@ public class ColorDetector extends Thread {
 		while (true) {
 			int colorIndex = color.getColor().getColor();
 			LCD.drawInt(colorIndex, 2, 9, 2);
-			SensorData.setColor(colorIndex);
+			if(colorIndex == 3 || colorIndex == 2){
+				SensorData.setColor(colorIndex);				
+			}
+			else{
+				int preColorIndex = SensorData.getColor();
+				
+				if(flag == false && isValid(preColorIndex)){
+					flag = true;
+				}
+				else if(flag){
+					SensorData.setColor(colorIndex);
+					flag = false;
+				}
+			}
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// e.printStackTrace();
 			}
 		}
-
-		// LCD.drawString("exit ColorDetector", 0, 3);
+	}
+	
+	private boolean isValid(int cIndex){
+		return cIndex == 3 || cIndex == 2;
 	}
 }

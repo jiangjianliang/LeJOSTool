@@ -17,7 +17,7 @@ public class RailSwitchBranchState extends State{
 
 	@Override
 	public void doExtra() {
-		context.resetDelay();
+		context.resetDelay(Context.RailBranchDelay);
 		// 发出换轨道命令
 		context.commandSwitchMain(false);
 	}

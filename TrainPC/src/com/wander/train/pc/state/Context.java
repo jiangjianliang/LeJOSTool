@@ -2,13 +2,16 @@ package com.wander.train.pc.state;
 
 public interface Context {
 	
-	public void setState(State state);
-	
-	public void resetDelay();
+	//延迟相关
+	public static int TrainStopDelay = 18;
+	public static int RailBranchDelay = 18;
+	public static int TrainLeaveDelay = 15;
+	public void resetDelay(int initDelay);	
 	public void incDelay();
 	public boolean isExpired();
 	
-	
+	public void setState(State state);
+	//遍历火车
 	public void itrInit();
 	public boolean itrNext();
 	
@@ -31,9 +34,7 @@ public interface Context {
 	 */
 	public boolean isSwitch();
 	
-	/**
-	 * 控制类命令
-	 */
+	// 控制类命令
 	/**
 	 * 向前运行
 	 * @param dest
@@ -63,6 +64,8 @@ public interface Context {
 	/**
 	 * 变换轨道
 	 * @param flag
+	 * true 换轨到主干道
+	 * false 换轨道到分支道
 	 */
 	public void commandSwitchMain(boolean flag);
 	

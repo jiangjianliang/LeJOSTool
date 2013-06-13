@@ -9,7 +9,6 @@ public class TrainStartState extends State {
 
 	@Override
 	public void handle() {
-		//以后要将接口改一下
 		int result = context.updateDistance();
 		if (result == 2) {
 			context.setState(new TrainLeaveState(context));

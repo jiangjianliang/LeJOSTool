@@ -26,7 +26,7 @@ public class TrainLeaveState extends State {
 	@Override
 	public void doExtra() {
 		// do nothing
-		context.resetDelay();
+		context.resetDelay(Context.TrainLeaveDelay);
 	}
 
 	@Override

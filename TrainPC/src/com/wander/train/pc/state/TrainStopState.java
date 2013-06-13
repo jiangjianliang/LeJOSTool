@@ -14,13 +14,17 @@ public class TrainStopState extends State {
 			// 转向ForwardSwitchRail
 			context.setState(new RailSwitchBranchState(context));
 		} else {
-			// 转向TrainStart
-			context.setState(new TrainStartState(context));
+			context.incDelay();
+			if(context.isExpired()){
+				// 转向TrainStart
+				context.setState(new TrainStartState(context));				
+			}
 		}
 	}
 
 	@Override
 	public void doExtra() {
+		context.resetDelay(Context.TrainStopDelay);
 		// 发出列车停止命令
 		context.commandStop();
 	}
