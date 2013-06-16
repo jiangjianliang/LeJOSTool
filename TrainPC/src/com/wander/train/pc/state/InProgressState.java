@@ -9,18 +9,14 @@ public class InProgressState extends State {
 
 	@Override
 	public void handle() {
-		boolean result = context.updateColor();
-		if(result){
+		boolean colorResult = context.updateColor();
+		int distanceResult = context.updateDistance();
+		if(colorResult && distanceResult == 0){
 			context.setState(new TrainEnterState(context));
 		}
-		else{
-			int disType = context.updateDistance();
-			if(disType == 1){
-				//TODO 详细考虑
-				context.setState(new SensorErrorState(context));
-			}
+		else if(colorResult && distanceResult == 1){
+			context.setState(new SensorErrorState(context));
 		}
-		
 	}
 
 	@Override

@@ -5,6 +5,7 @@ public interface Context {
 	//延迟相关
 	public static int TrainStopDelay = 18;
 	public static int RailBranchDelay = 18;
+	public static int RailMainDelay = 18;
 	public static int TrainLeaveDelay = 15;
 	public void resetDelay(int initDelay);	
 	public void incDelay();

@@ -36,6 +36,8 @@ public class StationInfo implements Context,HeartDetectable {
 	 * 用于记录是哪一辆火车进站
 	 */
 	private int which;
+	private int colWhich;
+	private boolean flag;
 	/**
 	 * 本站台的索引
 	 */
@@ -182,8 +184,13 @@ public class StationInfo implements Context,HeartDetectable {
 			return false;
 		} else {
 			System.err.println("choose "+ result);
-			which = result;
-			return true;
+			if(which != result){
+				which = result;
+				return true;
+			}
+			else{
+				return false;
+			}
 		}
 	}
 

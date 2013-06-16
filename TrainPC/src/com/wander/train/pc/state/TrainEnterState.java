@@ -9,9 +9,13 @@ public class TrainEnterState extends State {
 
 	@Override
 	public void handle() {
-		int result = context.updateDistance();
-		if(result == 1){
+		boolean colorResult = context.updateColor();
+		int distanceResult = context.updateDistance();
+		if(colorResult == false && distanceResult == 1){
 			context.setState(new TrainStopState(context));			
+		}
+		else if(colorResult){
+			//context.setState(new ColTrainStopState());
 		}
 	}
 

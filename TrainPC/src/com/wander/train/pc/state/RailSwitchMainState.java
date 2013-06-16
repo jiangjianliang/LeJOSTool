@@ -9,13 +9,16 @@ public class RailSwitchMainState extends State {
 
 	@Override
 	public void handle() {
+		context.incDelay();
 		// 转向InProgress
-		context.setState(new InProgressState(context));
-
+		if(context.isExpired()){
+			context.setState(new InProgressState(context));			
+		}
 	}
 
 	@Override
 	public void doExtra() {
+		context.resetDelay(Context.RailMainDelay);
 		//切换轨道
 		context.commandSwitchMain(true);
 	}
