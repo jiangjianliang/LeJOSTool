@@ -1,6 +1,5 @@
 package com.wander.train.pc.state;
 
-
 public class TrainEnterState extends State {
 
 	public TrainEnterState(Context context) {
@@ -9,24 +8,34 @@ public class TrainEnterState extends State {
 
 	@Override
 	public void handle() {
-		boolean colorResult = context.updateColor();
-		int distanceResult = context.updateDistance();
-		if(colorResult == false && distanceResult == 1){
-			context.setState(new TrainStopState(context));			
+		if (context.isInCol() == false) {
+			boolean colorResult = context.updateColor();
+			int distanceResult = context.updateDistance();
+			if (colorResult == false && distanceResult == 1) {
+				context.setState(new TrainStopState(context));
+			} else if (colorResult && distanceResult == 1) {
+				context.enterCol();
+				context.setState(new TrainStopState(context));
+			} else if (colorResult) {
+				context.enterCol();
+			}
 		}
-		else if(colorResult){
-			//context.setState(new ColTrainStopState());
+		else{
+			int distanceResult = context.updateDistance();
+			if (distanceResult == 1) {
+				context.setState(new TrainStopState(context));
+			}
 		}
 	}
 
 	@Override
 	public void doExtra() {
-		//减速
-		if(context.isSwitch()){
-			context.commandSlowDown(3);						
-		}
-		else{
-			context.commandSlowDown(2);			
+		context.enterCS();
+		// 减速
+		if (context.isSwitch()) {
+			context.commandSlowDown(3);
+		} else {
+			context.commandSlowDown(2);
 		}
 	}
 
@@ -34,6 +43,5 @@ public class TrainEnterState extends State {
 	public String toString() {
 		return "TrainEnter";
 	}
-	
-	
+
 }

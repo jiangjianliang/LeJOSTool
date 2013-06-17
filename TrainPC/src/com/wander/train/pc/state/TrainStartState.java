@@ -9,9 +9,26 @@ public class TrainStartState extends State {
 
 	@Override
 	public void handle() {
-		int result = context.updateDistance();
-		if (result == 2) {
+		if(context.isInCol() == false){
+			
+		boolean colorResult = context.updateColor();
+		int distanceResult = context.updateDistance();
+		if (colorResult == false && distanceResult == 2) {
 			context.setState(new TrainLeaveState(context));
+		}
+		else if(colorResult && distanceResult == 2){
+			context.enterCol();
+			context.setState(new TrainLeaveState(context));
+		}
+		else if(colorResult){
+			context.enterCol();
+		}
+		}
+		else {
+			int distanceResult = context.updateDistance();
+			if (distanceResult == 2) {
+				context.setState(new TrainLeaveState(context));
+			}
 		}
 	}
 

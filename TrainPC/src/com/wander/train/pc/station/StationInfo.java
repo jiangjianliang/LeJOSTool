@@ -36,8 +36,9 @@ public class StationInfo implements Context,HeartDetectable {
 	 * 用于记录是哪一辆火车进站
 	 */
 	private int which;
-	private int colWhich;
 	private boolean flag;
+	private int colWhich;
+	private boolean colFlag;
 	/**
 	 * 本站台的索引
 	 */
@@ -72,7 +73,8 @@ public class StationInfo implements Context,HeartDetectable {
 	private State state;
 	/**
 	 * 表明是否为交换站点的标记 true:
-	 * TrainEnter-TrainStop-RailSwtich-TrainStart-TrainLeave-RailSwitch false:
+	 * TrainEnter-TrainStop-RailSwtich-TrainStart-TrainLeave-RailSwitch
+	 * false:
 	 * TrainEnter-TrainStop-TrainStart-TrainLeave
 	 */
 	private boolean isSwitch = false;
@@ -164,7 +166,7 @@ public class StationInfo implements Context,HeartDetectable {
 		}
 		// train enter
 		if (preDistance > ULTRASONIC_THRESH
-				&& (preDistance = distance) <= ULTRASONIC_THRESH)// TODO
+				&& (preDistance = distance) <= ULTRASONIC_THRESH)
 																	// 15这个值需要修改
 			return 1;
 		// train leave
@@ -184,12 +186,18 @@ public class StationInfo implements Context,HeartDetectable {
 			return false;
 		} else {
 			System.err.println("choose "+ result);
-			if(which != result){
-				which = result;
-				return true;
+			if(flag){//已经有火车在独占站台
+				if(which != result){
+					colWhich = result;
+					return true;					
+				}
+				else{
+					return false;
+				}
 			}
 			else{
-				return false;
+				which = result;
+				return true;
 			}
 		}
 	}
@@ -209,6 +217,8 @@ public class StationInfo implements Context,HeartDetectable {
 		}
 	}
 
+	
+	
 	/**
 	 * 发送程序运行命令
 	 */
@@ -260,11 +270,32 @@ public class StationInfo implements Context,HeartDetectable {
 		// System.err.println("in commandStop + "+ which);
 		mm.commandTrainStop(which);
 	}
+	
+	@Override
+	public void commandColForward(int dest) {
+		mm.commandTrainForward(which, dest);
+	}
+
+	@Override
+	public void commandColBackward(int dest) {
+		mm.commandTrainBackward(which, dest);
+	}
+	
+	@Override
+	public void commandColStop(){
+		mm.commandTrainStop(colWhich);
+	}
 
 	@Override
 	public void commandSwitchMain(boolean flag) {
 		// System.err.println("in commandSwitch + "+ flag);
-		mm.commandStationSwitch(flag);
+		if(flag){
+			switchMain();
+		}
+		else{
+			switchBranch();
+		}
+		//mm.commandStationSwitch(flag);
 	}
 
 	// HeartDetector检测使用
@@ -293,4 +324,36 @@ public class StationInfo implements Context,HeartDetectable {
 		}
 	}
 
+	@Override
+	public void enterCS() {
+		flag = true;
+		
+	}
+
+	@Override
+	public void exitCS() {
+		flag = false;
+	}
+
+	@Override
+	public void enterCol() {
+		//TODO 考虑到后面需要还原状态这里可能要进行减速
+		mm.commandTrainStop(colWhich);
+		colFlag = true;
+	}
+
+	@Override
+	public void exitCol() {
+		mm.commandTrainResume(colWhich);
+		//TODO 也要将which的值换成colWhich
+		which = colWhich;
+		colFlag = false;
+	}
+
+	@Override
+	public boolean isInCol() {
+		return colFlag;
+	}
+	
+	
 }

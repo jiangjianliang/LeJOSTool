@@ -107,6 +107,18 @@ public class TrainInfo implements HeartDetectable{
 		writer.synWriteIntAndFlush(Command.TRAIN_STOP, "send train-stop!");
 	}
 	/**
+	 * 恢复火车停止之前的运行状态
+	 */
+	public void resume(){
+		int cmd = Command.SPEED_MARK + getSpeed();
+		if(isBackward()){
+			cmd = -cmd;
+		}
+		writer.synWriteIntAndFlush(cmd, "send train-resume");
+	}
+	
+	
+	/**
 	 * 发送前进命令
 	 * @param dest
 	 */
@@ -173,7 +185,7 @@ public class TrainInfo implements HeartDetectable{
 	public void exit(){
 		writer.synWriteIntAndFlush(Command.EXIT, "send train-exit");
 	}
-
+	
 	//HeartDetector使用
 	@Override
 	public boolean isBeatFlag() {

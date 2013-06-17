@@ -177,6 +177,13 @@ public class MonitorModel implements Config{
 		trainList[which].stop();
 	}
 	
+	public void commandTrainResume(int which){
+		if(which >= trainList.length){
+			return;
+		}
+		trainList[which].resume();
+	}
+	
 	public void commandTrainForward(int which, int dest){
 		if(which >= trainList.length){
 			return;
@@ -209,7 +216,6 @@ public class MonitorModel implements Config{
 	
 	/**
 	 * 退出程序命令
-	 * @throws IOException
 	 */
 	public void commandExit() {
 		for(int i=0; i < stationList.length; i++){
@@ -221,6 +227,7 @@ public class MonitorModel implements Config{
 	}
 	/**
 	 * 换轨命令
+	 * 给MonitorView测试用
 	 * @param flag
 	 */
 	public void commandStationSwitch(boolean flag){

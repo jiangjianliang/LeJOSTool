@@ -18,6 +18,7 @@ public class SensorErrorState extends State {
 
 	@Override
 	public void doExtra() {
+		context.enterCS();
 		//TODO 让所有火车都停止？
 		context.itrInit();
 		while(context.itrNext()){

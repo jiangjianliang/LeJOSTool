@@ -16,6 +16,13 @@ public interface Context {
 	public void itrInit();
 	public boolean itrNext();
 	
+	//临界区
+	public void enterCS();
+	public void exitCS();
+	public void enterCol();
+	public void exitCol();
+	public boolean isInCol();
+	
 	/**
 	 * 更新距离
 	 * @return
@@ -62,6 +69,13 @@ public interface Context {
 	 * 停止火车
 	 */
 	public void commandStop();
+	
+	public void commandColForward(int dest);
+	public void commandColBackward(int dest);
+	public void commandColStop();
+	
+	
+	
 	/**
 	 * 变换轨道
 	 * @param flag
