@@ -180,7 +180,7 @@ public class StationInfo implements Context,HeartDetectable {
 	public boolean updateColor() {
 		// System.err.println("color is "+ color);
 		// 根据color返回是哪一辆火车进站了
-		int result = chooseTrain(color);
+		int result = chooseTrain();
 		
 		if (result == -1) {
 			return false;
@@ -202,7 +202,7 @@ public class StationInfo implements Context,HeartDetectable {
 		}
 	}
 
-	private int chooseTrain(int color) {
+	private int chooseTrain() {
 		int i = 0;
 		for (; i < Config.TrainColor.length; i++) {
 			if (Config.TrainColor[i] == color) {
@@ -212,7 +212,7 @@ public class StationInfo implements Context,HeartDetectable {
 		if (i == Config.TrainColor.length) {
 			return -1;
 		} else {
-			System.err.println(color);
+			System.err.println("color is "+color);
 			return i;
 		}
 	}
@@ -273,12 +273,12 @@ public class StationInfo implements Context,HeartDetectable {
 	
 	@Override
 	public void commandColForward(int dest) {
-		mm.commandTrainForward(which, dest);
+		mm.commandTrainForward(colWhich, dest);
 	}
 
 	@Override
 	public void commandColBackward(int dest) {
-		mm.commandTrainBackward(which, dest);
+		mm.commandTrainBackward(colWhich, dest);
 	}
 	
 	@Override
@@ -338,12 +338,14 @@ public class StationInfo implements Context,HeartDetectable {
 	@Override
 	public void enterCol() {
 		//TODO 考虑到后面需要还原状态这里可能要进行减速
+		System.err.println("enterCol: "+colWhich);
 		mm.commandTrainStop(colWhich);
 		colFlag = true;
 	}
 
 	@Override
 	public void exitCol() {
+		System.err.println("exitCol: "+colWhich);
 		mm.commandTrainResume(colWhich);
 		//TODO 也要将which的值换成colWhich
 		which = colWhich;

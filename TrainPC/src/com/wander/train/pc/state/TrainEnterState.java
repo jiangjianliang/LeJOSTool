@@ -14,9 +14,11 @@ public class TrainEnterState extends State {
 			if (colorResult == false && distanceResult == 1) {
 				context.setState(new TrainStopState(context));
 			} else if (colorResult && distanceResult == 1) {
+				System.err.println("enter collision");
 				context.enterCol();
 				context.setState(new TrainStopState(context));
 			} else if (colorResult) {
+				System.err.println("enter collision");
 				context.enterCol();
 			}
 		}

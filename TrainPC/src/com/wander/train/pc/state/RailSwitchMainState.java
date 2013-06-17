@@ -8,20 +8,25 @@ public class RailSwitchMainState extends State {
 
 	@Override
 	public void handle() {
-		boolean colorResult = context.updateColor();
-		context.incDelay();
-		//TODO 参照TrainLeaveState
-		if (colorResult == false && context.isExpired()) {
-			// 转向InProgress
-			context.setState(new InProgressState(context));
-		}
-		else if(colorResult && context.isExpired()){
-			context.enterCol();
-			context.exitCol();
-			context.setState(new TrainEnterState(context));
-		}
-		else if(colorResult){
-			context.enterCol();
+		if (context.isInCol() == false) {
+			boolean colorResult = context.updateColor();
+			context.incDelay();
+			if (colorResult == false && context.isExpired()) {
+				// 转向InProgress
+				context.setState(new InProgressState(context));
+			} else if (colorResult && context.isExpired()) {
+				context.enterCol();
+				context.exitCol();
+				context.setState(new TrainEnterState(context));
+			} else if (colorResult) {
+				context.enterCol();
+			}
+		}else{
+			context.incDelay();
+			if (context.isExpired()) {
+				context.exitCol();
+				context.setState(new TrainEnterState(context));
+			}
 		}
 	}
 

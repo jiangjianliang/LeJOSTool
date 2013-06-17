@@ -10,7 +10,6 @@ public class TrainStartState extends State {
 	@Override
 	public void handle() {
 		if(context.isInCol() == false){
-			
 		boolean colorResult = context.updateColor();
 		int distanceResult = context.updateDistance();
 		if (colorResult == false && distanceResult == 2) {

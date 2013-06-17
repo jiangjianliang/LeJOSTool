@@ -14,7 +14,7 @@ public class InProgressState extends State {
 		if(colorResult && distanceResult == 0){
 			context.setState(new TrainEnterState(context));
 		}
-		else if(colorResult && distanceResult == 1){
+		else if(colorResult == false && distanceResult == 1){
 			context.setState(new SensorErrorState(context));
 		}
 		
@@ -22,9 +22,7 @@ public class InProgressState extends State {
 
 	@Override
 	public void doExtra() {
-		//TODO 需要在某处将context的color信息复位？
 		context.exitCS();
-		//TODO 不同的速度
 		if(context.isSwitch()){
 			//context.commandSlowDown(2);
 			context.commandSpeedUp(2);

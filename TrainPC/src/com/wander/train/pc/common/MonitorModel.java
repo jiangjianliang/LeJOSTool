@@ -258,6 +258,7 @@ public class MonitorModel implements Config{
 	 */
 	public void clean() {
 		//释放资源
+		/*
 		for(int i=0; i< stationSender.length; i++){
 			try {
 				stationSender[i].close();
@@ -272,6 +273,7 @@ public class MonitorModel implements Config{
 				//e.printStackTrace();
 			}
 		}
+		*/
 		for(int i = 0; i < stationNxtList.length; i++){
 			try {
 				stationNxtList[i].close();
