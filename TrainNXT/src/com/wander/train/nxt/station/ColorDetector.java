@@ -13,17 +13,17 @@ public class ColorDetector extends Thread {
 		this.color = color;
 		setDaemon(true);
 		color.setFloodlight(Color.NONE);
-		// color.setFloodlight(Color.WHITE);
-		// color.setFloodlight(true);
 	}
 
 	@Override
 	public void run() {
 		while (true) {
 			int colorIndex = color.getColor().getColor();
-			LCD.drawInt(colorIndex, 2, 9, 2);
+			//LCD.drawInt(colorIndex, 2, 9, 2);
+			LCD.drawString(colorIndex + "|" + SensorData.getColor(), 6, 2);
 			if(colorIndex == 3 || colorIndex == 2){
-				SensorData.setColor(colorIndex);				
+				SensorData.setColor(colorIndex);
+				flag = false;
 			}
 			else{
 				int preColorIndex = SensorData.getColor();

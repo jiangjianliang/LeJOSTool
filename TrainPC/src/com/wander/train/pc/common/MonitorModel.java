@@ -19,23 +19,16 @@ public class MonitorModel implements Config{
 	/**
 	 * NXT的Mac地址
 	 */
-	private static NXTInfo[] nxts = new NXTInfo[3];
+	private static NXTInfo[] nxts = new NXTInfo[4];
 	{
-		nxts[0] = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT1",
+		nxts[0] = new NXTInfo(NXTCommFactory.BLUETOOTH, "Station0",
 			"00:16:53:10:40:a7");
-		nxts[1] = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT2",
+		nxts[1] = new NXTInfo(NXTCommFactory.BLUETOOTH, "Station1",
 			"00:16:53:13:3a:1f");
-		nxts[2] = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT3",
+		nxts[2] = new NXTInfo(NXTCommFactory.BLUETOOTH, "Train0",
 			"00:16:53:09:78:1f");
-	}
-	/**
-	 * NXT的名称
-	 */
-	private static String[] nxtStr = new String[3];
-	{
-		nxtStr[0] = "usb://NXT_0";
-		nxtStr[1] = "usb://NXT_1";
-		nxtStr[2] = "usb://NXT_2";
+		nxts[3] = new NXTInfo(NXTCommFactory.BLUETOOTH, "Train1",
+			"00:16:53:1a:61:79");
 	}
 	
 	//实例成员
@@ -68,12 +61,7 @@ public class MonitorModel implements Config{
 	private void connect(){
 		boolean[] stationConnected = new boolean[stationList.length];
 		boolean[] trainConnected = new boolean[trainList.length];
-		/*
-		 * pcNxtList = new NXTConnector[2]; // initialize NXT connection
-		 * pcNxtList[0] = new NXTConnector(); pcNxtList[1] = new NXTConnector();
-		 * connected_1 = pcNxtList[0].connectTo("bt://NXT"); connected_2 =
-		 * pcNxtList[1].connectTo("bt://NXT_OF");
-		 */		
+		
 		// initialize input and output
 		if( CONN_TYPE == 0){
 			

@@ -136,6 +136,7 @@ public class MonitorView extends JFrame {
 				timer.start();
 				control.commandStart();
 				control.commandTrainBackward(0, 1);
+				control.commandTrainForward(1, 2);
 				infoArea.setText("start");
 			}
 		});
@@ -156,8 +157,9 @@ public class MonitorView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				timer.stop();
-				control.commandTrainStop(0);
-				//control.commandTrainStop(1);
+				for(int i=0; i < Config.TRAIN_NUM; i++){
+					control.commandTrainStop(i);
+				}
 				infoArea.setText("stop");
 			}
 			

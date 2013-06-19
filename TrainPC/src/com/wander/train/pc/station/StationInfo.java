@@ -178,14 +178,12 @@ public class StationInfo implements Context,HeartDetectable {
 
 	@Override
 	public boolean updateColor() {
-		// System.err.println("color is "+ color);
 		// 根据color返回是哪一辆火车进站了
 		int result = chooseTrain();
-		
 		if (result == -1) {
 			return false;
 		} else {
-			System.err.println("choose "+ result);
+			System.err.println(stationIndex+"]choose "+ result);
 			if(flag){//已经有火车在独占站台
 				if(which != result){
 					colWhich = result;
@@ -212,7 +210,7 @@ public class StationInfo implements Context,HeartDetectable {
 		if (i == Config.TrainColor.length) {
 			return -1;
 		} else {
-			System.err.println("color is "+color);
+			System.err.println(stationIndex+"]color is "+color);
 			return i;
 		}
 	}
@@ -267,7 +265,6 @@ public class StationInfo implements Context,HeartDetectable {
 
 	@Override
 	public void commandStop() {
-		// System.err.println("in commandStop + "+ which);
 		mm.commandTrainStop(which);
 	}
 	
@@ -288,14 +285,12 @@ public class StationInfo implements Context,HeartDetectable {
 
 	@Override
 	public void commandSwitchMain(boolean flag) {
-		// System.err.println("in commandSwitch + "+ flag);
 		if(flag){
 			switchMain();
 		}
 		else{
 			switchBranch();
 		}
-		//mm.commandStationSwitch(flag);
 	}
 
 	// HeartDetector检测使用
@@ -338,14 +333,14 @@ public class StationInfo implements Context,HeartDetectable {
 	@Override
 	public void enterCol() {
 		//TODO 考虑到后面需要还原状态这里可能要进行减速
-		System.err.println("enterCol: "+colWhich);
+		System.err.println(stationIndex+"]enterCol: "+colWhich);
 		mm.commandTrainStop(colWhich);
 		colFlag = true;
 	}
 
 	@Override
 	public void exitCol() {
-		System.err.println("exitCol: "+colWhich);
+		System.err.println(stationIndex+"]exitCol: "+colWhich);
 		mm.commandTrainResume(colWhich);
 		//TODO 也要将which的值换成colWhich
 		which = colWhich;
